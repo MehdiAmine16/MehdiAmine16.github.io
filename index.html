@@ -396,7 +396,38 @@ const PROJECTS = [
   { id: 'demi', mono: 'DT', color: '#1f4e8c', title: 'DEMI — Digital twin of smart buildings', category: 'Digital twin · AI', year: '2026',
     context: 'Research internship', role: 'Design & development',
     summary: 'A complete digital twin of smart campus buildings, with live dashboards and a natural-language assistant powered by local AI.',
-    tech: ['Python', 'FIWARE / NGSI-LD', 'CrateDB', 'Local LLMs', 'JavaScript', 'Docker'] },
+    tech: ['Python', 'FIWARE / NGSI-LD', 'CrateDB', 'Local LLMs', 'JavaScript', 'Docker'],
+    d: {
+      problem: [
+        'Smart buildings now combine many energy systems: EV chargers, solar panels, batteries and the building\'s own consumption. Each one produces its own data, in its own format, on its own platform. For the people running the campus, there was no single place to see what was happening, no way to test a decision before applying it, and no way to ask a simple question without writing database queries.',
+        'The goal of DEMI was to build a digital twin: a live, faithful software copy of these buildings that gathers all their data, shows it clearly, and lets operators interact with it in plain language.'
+      ],
+      stateOfArt: [
+        'Digital twins are common in industry and energy, but they are usually built on closed, proprietary platforms. In smart cities, the open FIWARE ecosystem and the NGSI-LD standard offer a shared way to describe and exchange data about connected devices, which makes them a natural foundation for an open, interoperable twin.',
+        'On the AI side, recent research shows that large language models can turn natural-language questions into database queries and help understand what an operator actually wants, but most of this work relies on cloud models. Running the models locally keeps the infrastructure\'s data on site. DEMI started from an earlier FIWARE prototype from the lab, which provided an initial data model and setup.'
+      ],
+      contribution: [
+        'Led the design and development end to end, turning the initial prototype into a complete platform.',
+        'Extended the NGSI-LD data model with new entities for solar panels, batteries and buildings, so the twin covers the whole energy system and not only the chargers.',
+        'Built the data pipelines that bring years of real charging and energy data into the twin, through the FIWARE context broker and a time-series database, with checks that every update arrives intact.',
+        'Designed and built the interactive dashboard from scratch: campus map, energy flows, charging timelines per port, monthly and hourly analyses, and a switch between historical data and live digital-twin data.',
+        'Built Pipeline Check, a sandboxed tool where anyone can change any value in the twin and watch it travel through the whole system, without touching real data.',
+        'Integrated local AI: an assistant that turns plain-English questions into database queries and explains the answer, with a benchmark of generated questions used to measure and improve its accuracy.',
+        'Built a live control service where operators give commands in plain language, and a monitoring page where the site reacts to "what if" scenarios (grid limits, less sun, every charger busy), followed by an AI-written summary of what happened.',
+        'Made the whole stack reproducible: containerised with Docker, with scripts that install, start and reset everything on a new machine.'
+      ],
+      technologies: [
+        { k: 'Languages', v: 'Python, JavaScript, SQL, Bash' },
+        { k: 'Digital twin & data', v: 'FIWARE Orion-LD, QuantumLeap, NGSI-LD, CrateDB, MongoDB' },
+        { k: 'AI', v: 'Local large language models (Ollama), natural-language-to-SQL, FastAPI' },
+        { k: 'Front end', v: 'HTML, CSS, JavaScript, Leaflet maps, Chart.js' },
+        { k: 'Infrastructure', v: 'Docker, Docker Compose, Jupyter notebooks, shell scripts' }
+      ],
+      outcome: [
+        'DEMI became a working digital twin of the campus buildings: real data flows into it, it can be explored visually or questioned in plain English, and scenarios can be simulated before acting on the real site. Everything runs on local machines, with no data sent to external AI services.',
+        'The project also documents its limits openly, such as gaps between data sources and the speed of local AI without a dedicated graphics card, and lays the groundwork for a future charging-coordination algorithm.'
+      ]
+    } },
   { id: 'code-crew', mono: 'AI', color: '#6a4bc4', title: 'Code Generation Crew', category: 'Multi-agent AI', year: '2025',
     context: 'M.Sc. project', role: 'Design & development',
     summary: 'AI agents on local models that write, review and test code together in a closed feedback loop until the program works.',
