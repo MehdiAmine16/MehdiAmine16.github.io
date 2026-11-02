@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mehdi Djerboua</title>
+<meta name="description" content="Mehdi Djerboua — AI engineer, M.Sc. in Artificial Intelligence (CNAM Paris). Digital twins, local LLMs, multi-agent systems, embedded and web projects.">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -10,362 +12,428 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { margin: 0; background: #efe7d4; }
-  canvas { image-rendering: pixelated; image-rendering: crisp-edges; }
-  ::selection { background: #cc3a2e; color: #efe7d4; }
-  @keyframes flick { 0%,100%{opacity:.96} 7%{opacity:.9} 9%{opacity:.98} 50%{opacity:.94} }
-  @keyframes scan { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
-  @keyframes caret { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-  @keyframes blink2 { 0%,90%,100%{transform:scaleY(1)} 94%{transform:scaleY(0.08)} }
-  .pcard { cursor:pointer; }
-  .pgo { opacity:0; transform:translateX(-6px); transition:opacity .16s ease, transform .16s ease; }
-  .pcard:hover .pgo { opacity:1; transform:translateX(0); }
-  @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-4px) rotate(3deg)} }
-  @keyframes pop { 0%{transform:scale(.6);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
-  ::-webkit-scrollbar { width: 12px; }
-  ::-webkit-scrollbar-track { background:#efe7d4; }
-  ::-webkit-scrollbar-thumb { background:#cc3a2e; border:3px solid #efe7d4; }
+  /* Plain academic home page: one centred column, photo header, logo timeline */
+  :root{
+    --bg:#ffffff; --card:#ffffff; --ink:#1b1f24; --body:#3a3f47; --muted:#7a808a; --line:#e3e5e8; --soft:#f6f7f8;
+    --link:#1a5fb4; --link-hover:#0b3f80;
+    --sans:'Source Sans 3',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  body.lock { overflow:hidden; }
+  a { color:var(--link); text-decoration:none; }
+  a:hover { color:var(--link-hover); text-decoration:underline; }
+  img { max-width:100%; display:block; }
+  .col { max-width:860px; margin:0 auto; padding:0 24px; }
+
+  /* header */
+  .head { display:flex; align-items:center; gap:34px; padding:40px 0 30px; border-bottom:1px solid var(--line); }
+  .photo { width:220px; flex:none; border-radius:14px; overflow:hidden; border:1px solid var(--line); box-shadow:0 8px 22px -14px rgba(0,0,0,.35); }
+  .photo img { width:100%; height:auto; }
+  .who h1 { font-size:34px; font-weight:600; margin:0 0 4px; letter-spacing:-.01em; }
+  .who .tag { color:var(--muted); font-style:italic; margin:0 0 14px; max-width:420px; }
+  .icons { display:flex; flex-wrap:wrap; gap:8px; }
+  .icons a { display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:600; color:var(--ink); border:1px solid var(--line);
+    border-radius:999px; padding:5px 12px; background:var(--card); }
+  .icons a:hover { border-color:var(--link); color:var(--link); text-decoration:none; }
+  .icons svg { width:15px; height:15px; }
+
+  /* section titles */
+  h2 { font-size:22px; font-weight:600; margin:38px 0 18px; }
+
+  /* timeline */
+  .tl { position:relative; }
+  .tl::before { content:""; position:absolute; left:154px; top:6px; bottom:6px; width:1px; background:var(--line); }
+  .tl-row { display:grid; grid-template-columns:88px 96px 1fr; gap:0 18px; padding:16px 0; align-items:start; }
+  .tl-date { text-align:right; font-size:14px; color:var(--muted); padding-top:22px; font-variant-numeric:tabular-nums; }
+  .tl-row .tile { width:96px; height:68px; border-radius:12px; font-size:18px; }
+  .tile { width:54px; height:54px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff;
+    font-weight:700; font-size:14px; letter-spacing:.02em; position:relative; z-index:1; box-shadow:0 0 0 5px var(--bg); }
+  .tile img { width:100%; height:100%; object-fit:contain; }
+  .courses { display:grid; grid-template-columns:150px 1fr; gap:4px 14px; margin:10px 0 4px; padding:12px 14px; background:var(--soft);
+    border:1px solid var(--line); border-radius:10px; font-size:15px; }
+  .courses dt { font-weight:600; color:var(--ink); }
+  .courses dd { margin:0; color:var(--body); }
+  .partners { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 8px; }
+  .pchip { height:34px; display:inline-flex; align-items:center; padding:5px 9px; border-radius:8px; border:1px solid var(--line);
+    font-size:13px; font-weight:700; letter-spacing:.04em; }
+  .pchip img { height:100%; width:auto; max-width:120px; }
+  .tiles { display:flex; flex-direction:column; gap:10px; position:relative; z-index:1; }
+  .tl-text { color:var(--body); }
+  .tl-text b { color:var(--ink); font-weight:600; }
+  .tl-text .sub { display:block; color:var(--muted); font-size:15px; margin-top:2px; }
+  .tl-links { margin-top:6px; font-size:15px; }
+  .tl-links a { margin-right:14px; cursor:pointer; }
+
+  /* project grid */
+  .pgrid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  .pcard { display:flex; flex-direction:column; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 20px 16px;
+    cursor:pointer; transition:border-color .15s, transform .15s, background .15s; }
+  .pcard:hover { border-color:#9fb8da; transform:translateY(-2px); box-shadow:0 10px 24px -16px rgba(26,95,180,.35); }
+  .pcard:hover .ptitle { color:var(--link); }
+  .pcard:focus-visible { outline:2px solid var(--link); outline-offset:2px; }
+  .ptop { display:flex; justify-content:space-between; gap:10px; font-size:13px; margin-bottom:8px; }
+  .pcat { color:var(--link); font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:12px; }
+  .pyear { color:var(--muted); font-variant-numeric:tabular-nums; }
+  .ptitle { font-weight:600; font-size:18px; color:var(--ink); margin-bottom:6px; line-height:1.3; }
+  .pdesc { color:var(--body); font-size:15px; flex:1; margin-bottom:12px; }
+  .ptags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .ptags span { font-size:12px; color:var(--body); background:var(--soft); border:1px solid var(--line); border-radius:6px; padding:2px 8px; }
+  .pmore { font-size:14px; font-weight:600; color:var(--link); border-top:1px solid var(--line); padding-top:10px; }
+  .ogrid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .ocard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+  .olabel { font-size:12px; font-weight:600; color:var(--link); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; }
+  .otitle { font-weight:600; font-size:17px; color:var(--ink); margin-bottom:4px; }
+  .ocard p { margin:0; color:var(--body); font-size:15px; }
+  .next { margin:18px 0 0; color:var(--body); }
+  .next b { color:var(--ink); }
+  footer { color:var(--muted); font-size:14px; padding:34px 0 50px; border-top:1px solid var(--line); margin-top:40px; }
+
+  /* case-study panel */
+  .overlay { position:fixed; inset:0; z-index:80; background:rgba(20,24,30,.35); display:flex; justify-content:flex-end; animation:fade .15s ease; }
+  .panel { width:min(720px,100%); height:100%; overflow-y:auto; background:var(--bg); border-left:1px solid var(--line);
+    box-shadow:-18px 0 40px -24px rgba(0,0,0,.4); animation:slide .22s cubic-bezier(.2,.7,.3,1); }
+  @keyframes fade { from{opacity:0} to{opacity:1} }
+  @keyframes slide { from{transform:translateX(30px);opacity:.5} to{transform:none;opacity:1} }
+  .panel-head { position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:12px 28px; background:rgba(255,255,255,.96);
+    border-bottom:1px solid var(--line); z-index:2; }
+  .panel-head span { color:var(--muted); font-size:14px; }
+  .close { font:inherit; font-size:15px; font-weight:600; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:5px 12px; cursor:pointer; color:var(--ink); }
+  .close:hover { border-color:var(--link); color:var(--link); }
+  .panel-body { padding:26px 28px 56px; }
+  .panel h3 { font-size:28px; font-weight:600; margin:0 0 8px; }
+  .panel .summary { color:var(--body); margin:0 0 18px; }
+  .facts { display:flex; flex-wrap:wrap; gap:6px 22px; font-size:15px; color:var(--muted); padding-bottom:18px; border-bottom:1px solid var(--line); margin-bottom:22px; }
+  .facts b { color:var(--ink); font-weight:600; }
+  .cs { margin-bottom:22px; }
+  .cs h4 { font-size:18px; font-weight:600; margin:0 0 6px; }
+  .cs p { margin:0 0 10px; color:var(--body); }
+  .cs ul { margin:0; padding-left:20px; color:var(--body); }
+  .cs li { margin-bottom:5px; }
+  .tech { display:grid; grid-template-columns:140px 1fr; gap:6px 16px; color:var(--body); margin:0; }
+  .tech dt { font-weight:600; color:var(--ink); }
+  .tech dd { margin:0; }
+  .soon { background:var(--soft); border:1px dashed #c9cdd3; border-radius:8px; padding:16px 18px; color:var(--muted); }
+
+  @media (max-width: 860px){ .ogrid { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width: 640px){
+    body { font-size:16px; }
+    .col { padding:0 16px; }
+    .head { flex-direction:column; align-items:flex-start; gap:18px; padding-top:28px; }
+    .photo { width:170px; }
+    .who h1 { font-size:29px; }
+    .tl::before { left:36px; }
+    .tl-row { grid-template-columns:72px 1fr; gap:4px 14px; }
+    .tl-row .tile { width:72px; height:54px; font-size:15px; }
+    .tl-date { grid-column:2; grid-row:1; text-align:left; padding-top:0; }
+    .tl-row .tiles { grid-column:1; grid-row:1 / span 2; }
+    .tl-text { grid-column:2; }
+    .pgrid, .ogrid { grid-template-columns:1fr; }
+    .panel-head, .panel-body { padding-left:18px; padding-right:18px; }
+    .tech, .courses { grid-template-columns:1fr; gap:0; }
+    .courses dd { margin-bottom:6px; }
+    .tech dd { margin-bottom:8px; }
+  }
 </style>
 </helmet>
 
-<div style="position:relative; min-height:100vh; background:#efe7d4; color:#2a241c; font-family:'VT323', monospace; overflow-x:hidden;">
-
-  <canvas ref="{{ starRef }}" style="position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none;"></canvas>
-
-  <sc-if value="{{ showCrt }}" hint-placeholder-val="{{ true }}">
-    <div style="position:fixed; inset:0; z-index:60; pointer-events:none; background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 3px, rgba(0,0,0,0.045) 4px); animation:flick 6s infinite; mix-blend-mode:multiply;"></div>
-    <div style="position:fixed; inset:0; z-index:61; pointer-events:none; background:radial-gradient(120% 120% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.16) 100%);"></div>
-    <div style="position:fixed; left:0; right:0; height:140px; z-index:62; pointer-events:none; background:linear-gradient(to bottom, rgba(255,205,117,0) 0%, rgba(255,205,117,0.06) 50%, rgba(255,205,117,0) 100%); animation:scan 7s linear infinite;"></div>
-  </sc-if>
-
-  <!-- NAV -->
-  <nav style="position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:16px 28px; background:rgba(247,242,232,0.82); backdrop-filter:blur(4px); border-bottom:3px solid #d6c9ad;">
-    <a href="#top" style="display:flex; align-items:center; gap:12px; text-decoration:none;">
-      <span style="display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; background:#cc3a2e; color:#efe7d4; font-family:'Press Start 2P',monospace; font-size:13px; box-shadow:4px 4px 0 #2a241c;">MD</span>
-      <span style="font-family:'Press Start 2P',monospace; font-size:11px; color:#2a241c; letter-spacing:1px;">MEHDI.SYS</span>
-    </a>
-
-    <div style="display:flex; gap:22px; align-items:center; font-family:'Press Start 2P',monospace; font-size:9px;">
-      <a href="#about" style="color:#2a241c; text-decoration:none;" style-hover="color:#cc3a2e;">ABOUT</a>
-      <a href="#skills" style="color:#2a241c; text-decoration:none;" style-hover="color:#cc3a2e;">SKILLS</a>
-      <a href="#projects" style="color:#2a241c; text-decoration:none;" style-hover="color:#cc3a2e;">WORK</a>
-      <a href="#experience" style="color:#2a241c; text-decoration:none;" style-hover="color:#cc3a2e;">XP</a>
-      <a href="#contact" style="color:#efe7d4; text-decoration:none; background:#cc3a2e; padding:8px 12px; box-shadow:3px 3px 0 #2a241c;" style-hover="background:#a82e23;">CONTACT</a>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <header id="top" style="position:relative; z-index:10; max-width:1140px; margin:0 auto; padding:56px 28px 36px; display:grid; grid-template-columns:1.25fr 0.85fr; gap:40px; align-items:center;">
-    <div>
-      <div style="display:inline-block; font-family:'Press Start 2P',monospace; font-size:9px; color:#efe7d4; background:#cc3a2e; padding:7px 11px; margin-bottom:22px; box-shadow:3px 3px 0 #2a241c;">✦ AI &amp; SOFTWARE ENGINEER · PARIS</div>
-      <h1 style="font-family:'Press Start 2P',monospace; font-size:38px; line-height:1.35; margin:0 0 8px; color:#2a241c; text-shadow:5px 5px 0 #cc3a2e;">MEHDI<br>DJERBOUA</h1>
-      <div style="font-family:'Press Start 2P',monospace; font-size:14px; color:#cc3a2e; min-height:22px; margin:18px 0 24px;">&gt; {{ typed }}<span style="animation:caret 1s steps(1) infinite;">_</span></div>
-      <p style="font-size:23px; line-height:1.45; color:#4a4337; max-width:480px; margin:0 0 30px;">M2 Artificial Intelligence student at CNAM Paris. I build AI systems, web &amp; desktop apps, and automation tools — with a perfectionist, detail-obsessed mindset. Next stop: a PhD.</p>
-      <div style="display:flex; gap:16px; flex-wrap:wrap;">
-        <a href="#projects" style="font-family:'Press Start 2P',monospace; font-size:11px; color:#efe7d4; background:#cc3a2e; padding:15px 20px; text-decoration:none; box-shadow:5px 5px 0 #2a241c; transition:transform .1s, box-shadow .1s;" style-hover="transform:translate(-2px,-2px); box-shadow:7px 7px 0 #2a241c;" style-active="transform:translate(3px,3px); box-shadow:2px 2px 0 #2a241c;">VIEW WORK ▸</a>
-        <a href="uploads/cv_Mehdi_12_06_26.pdf" download style="font-family:'Press Start 2P',monospace; font-size:11px; color:#cc3a2e; background:transparent; padding:15px 20px; text-decoration:none; border:3px solid #cc3a2e; box-shadow:5px 5px 0 #d6c9ad; transition:transform .1s, box-shadow .1s;" style-hover="transform:translate(-2px,-2px); color:#a82e23; border-color:#a82e23;" style-active="transform:translate(3px,3px); box-shadow:2px 2px 0 #d6c9ad;">⬇ DOWNLOAD CV</a>
-      </div>
-      <div style="display:flex; gap:26px; margin-top:40px; flex-wrap:wrap;">
-        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3">
-          <div style="text-align:left;">
-            <div style="font-family:'Press Start 2P',monospace; font-size:22px; color:#cc3a2e; text-shadow:3px 3px 0 #d0b48a;">{{ s.v }}</div>
-            <div style="font-family:'Press Start 2P',monospace; font-size:8px; color:#8a7d68; margin-top:8px; letter-spacing:1px;">{{ s.k }}</div>
-          </div>
-        </sc-for>
-      </div>
-    </div>
-
-    <!-- SYSTEM TERMINAL -->
-    <div style="position:relative; justify-self:center; width:300px; max-width:78vw; background:linear-gradient(180deg,#fbf6ea,#f3ecda); border:4px solid #cc3a2e; box-shadow:9px 9px 0 #2a241c, 0 0 30px rgba(204,58,46,0.14);">
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 11px; background:#cc3a2e;">
-        <span style="font-family:'Press Start 2P',monospace; font-size:8px; color:#efe7d4;">MEHDI.SYS</span>
-        <span style="display:flex; gap:5px;">
-          <span style="width:9px; height:9px; background:#cc3a2e; display:block;"></span>
-          <span style="width:9px; height:9px; background:#cc3a2e; display:block;"></span>
-          <span style="width:9px; height:9px; background:#2a241c; display:block;"></span>
-        </span>
-      </div>
-      <div style="padding:22px 18px 24px; font-family:'VT323',monospace; font-size:20px; line-height:1.5;">
-        <div style="color:#8a7d68;">$ whoami</div>
-        <div style="color:#2a241c; margin-bottom:16px;">mehdi@cnam:~</div>
-        <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="color:#cc3a2e; width:62px; display:inline-block;">status</span><span style="color:#b3a888;">::</span><span style="color:#cc3a2e;">AVAILABLE</span></div>
-        <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="color:#cc3a2e; width:62px; display:inline-block;">loc</span><span style="color:#b3a888;">::</span><span style="color:#2a241c;">PARIS, FR</span></div>
-        <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="color:#cc3a2e; width:62px; display:inline-block;">focus</span><span style="color:#b3a888;">::</span><span style="color:#2a241c;">AI · RESEARCH</span></div>
-        <div style="display:flex; gap:8px;"><span style="color:#cc3a2e; width:62px; display:inline-block;">next</span><span style="color:#b3a888;">::</span><span style="color:#2a241c;">PHD</span></div>
-        <div style="margin-top:16px; color:#8a7d68;">$ run portfolio<span style="animation:caret 1s steps(1) infinite; color:#cc3a2e;">_</span></div>
+<div class="col">
+  <!-- HEADER -->
+  <header class="head">
+    <div class="photo"><img src="uploads/photo.jpg" alt="Mehdi Djerboua"></div>
+    <div class="who">
+      <h1>Mehdi Djerboua</h1>
+      <p class="tag">AI engineer, M.Sc. in Artificial Intelligence. I like building complete systems, from the hardware to the AI on top.</p>
+      <div class="icons">
+        <a href="mailto:djerbouame@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email</a>
+        <a href="https://www.linkedin.com/in/mehdi-amine-djerboua-34a72831b/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg>LinkedIn</a>
+        <a href="uploads/Mehdi_Djerboua_CV.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>CV</a>
       </div>
     </div>
   </header>
 
-  <!-- ABOUT -->
-  <section id="about" data-reveal style="position:relative; z-index:10; max-width:1140px; margin:0 auto; padding:56px 28px;">
-    <div style="font-family:'Press Start 2P',monospace; font-size:10px; color:#cc3a2e; margin-bottom:14px;">// 01 — ABOUT</div>
-    <h2 style="font-family:'Press Start 2P',monospace; font-size:24px; color:#2a241c; margin:0 0 28px; text-shadow:4px 4px 0 #d0b48a;">WHOAMI</h2>
-    <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:34px;">
-      <div style="background:#fbf6ea; border:3px solid #d6c9ad; padding:26px; box-shadow:6px 6px 0 #d6c9ad;">
-        <p style="font-size:23px; line-height:1.5; color:#4a4337; margin:0 0 18px;">I'm passionate about <span style="color:#cc3a2e;">artificial intelligence</span> and the theory of languages. I love turning messy problems into clean, reliable systems — from data pipelines and dashboards to embedded drivers and full-stack apps.</p>
-        <p style="font-size:23px; line-height:1.5; color:#4a4337; margin:0;">Multilingual by nature, methodical by habit. My long-term goal is a <span style="color:#cc3a2e;">PhD</span>, deepening AI research and contributing to ambitious projects across academia and industry. And on the side, I design and build tools and apps just for the fun of it.</p>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:18px;">
-        <div style="background:#fbf6ea; border:3px solid #d6c9ad; padding:20px; box-shadow:6px 6px 0 #d6c9ad;">
-          <div style="font-family:'Press Start 2P',monospace; font-size:9px; color:#cc3a2e; margin-bottom:14px;">LANGUAGES</div>
-          <sc-for list="{{ languages }}" as="lg" hint-placeholder-count="4">
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:2px dotted #d6c9ad;">
-              <span style="font-size:21px; color:#2a241c;">{{ lg.l }}</span>
-              <span style="font-family:'Press Start 2P',monospace; font-size:8px; color:#cc3a2e;">{{ lg.lvl }}</span>
+  <!-- TIMELINE -->
+  <h2>Education &amp; internships</h2>
+  <div class="tl">
+    <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="6">
+      <div class="tl-row">
+        <div class="tl-date">{{ t.date }}</div>
+        <div class="tiles">
+          <div class="tile" style="{{ t.tileStyle }}">
+            <sc-if value="{{ t.logo }}" hint-placeholder-val="{{ false }}"><img src="{{ t.logo }}" alt="{{ t.org }}"></sc-if>
+            <sc-if value="{{ t.noLogo }}" hint-placeholder-val="{{ true }}">{{ t.mono }}</sc-if>
+          </div>
+          <sc-if value="{{ t.logo2 }}" hint-placeholder-val="{{ false }}">
+            <div class="tile" style="{{ t.tile2Style }}"><img src="{{ t.logo2 }}" alt="{{ t.org }}"></div>
+          </sc-if>
+        </div>
+        <div class="tl-text">
+          <b>{{ t.title }}</b><span class="sub">{{ t.org }}</span>
+          <sc-if value="{{ t.hasPartners }}" hint-placeholder-val="{{ false }}">
+            <div class="partners">
+              <sc-for list="{{ t.partners }}" as="pt" hint-placeholder-count="4">
+                <span class="pchip" style="{{ pt.style }}" title="{{ pt.label }}">
+                  <sc-if value="{{ pt.logo }}" hint-placeholder-val="{{ false }}"><img src="{{ pt.logo }}" alt="{{ pt.label }}"></sc-if>
+                  <sc-if value="{{ pt.text }}" hint-placeholder-val="{{ false }}">{{ pt.text }}</sc-if>
+                </span>
+              </sc-for>
             </div>
-          </sc-for>
-        </div>
-        <div style="background:#fbf6ea; border:3px solid #d6c9ad; padding:20px; box-shadow:6px 6px 0 #d6c9ad;">
-          <div style="font-family:'Press Start 2P',monospace; font-size:9px; color:#cc3a2e; margin-bottom:14px;">SIDE QUESTS</div>
-          <div style="display:flex; flex-wrap:wrap; gap:9px;">
-            <sc-for list="{{ interests }}" as="it" hint-placeholder-count="4">
-              <span style="font-family:'Press Start 2P',monospace; font-size:8px; color:#efe7d4; background:#cc3a2e; padding:8px 10px;">{{ it }}</span>
-            </sc-for>
+          </sc-if>
+          <div>{{ t.text }}</div>
+          <sc-if value="{{ t.hasCourses }}" hint-placeholder-val="{{ false }}">
+            <dl class="courses">
+              <sc-for list="{{ t.courses }}" as="c" hint-placeholder-count="4"><dt>{{ c.g }}</dt><dd>{{ c.items }}</dd></sc-for>
+            </dl>
+          </sc-if>
+          <div class="tl-links">
+            <sc-for list="{{ t.links }}" as="l" hint-placeholder-count="1"><a onclick="{{ l.open }}">{{ l.label }} →</a></sc-for>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- SKILLS -->
-  <section id="skills" data-reveal style="position:relative; z-index:10; max-width:1140px; margin:0 auto; padding:56px 28px;">
-    <div style="font-family:'Press Start 2P',monospace; font-size:10px; color:#cc3a2e; margin-bottom:14px;">// 02 — SKILLS</div>
-    <h2 style="font-family:'Press Start 2P',monospace; font-size:24px; color:#2a241c; margin:0 0 28px; text-shadow:4px 4px 0 #d0b48a;">TOOLKIT</h2>
-    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:22px;">
-      <sc-for list="{{ skillGroups }}" as="g" hint-placeholder-count="4">
-        <div style="background:#fbf6ea; border:3px solid #d6c9ad; padding:22px; box-shadow:6px 6px 0 #d6c9ad;">
-          <div style="font-family:'Press Start 2P',monospace; font-size:11px; color:#cc3a2e; margin-bottom:18px; padding-bottom:14px; border-bottom:3px solid #d6c9ad;">{{ g.name }}</div>
-          <div style="display:flex; flex-wrap:wrap; gap:9px;">
-            <sc-for list="{{ g.items }}" as="sk" hint-placeholder-count="5">
-              <span style="font-size:20px; color:#2a241c; background:#efe7d4; border:2px solid #d6c9ad; padding:6px 11px;" style-hover="border-color:#cc3a2e; color:#2a241c;">{{ sk }}</span>
-            </sc-for>
-          </div>
-        </div>
-      </sc-for>
-    </div>
-  </section>
+    </sc-for>
+  </div>
 
   <!-- PROJECTS -->
-  <section id="projects" data-reveal style="position:relative; z-index:10; max-width:1140px; margin:0 auto; padding:56px 28px;">
-    <div style="font-family:'Press Start 2P',monospace; font-size:10px; color:#cc3a2e; margin-bottom:14px;">// 03 — WORK</div>
-    <h2 style="font-family:'Press Start 2P',monospace; font-size:24px; color:#2a241c; margin:0 0 28px; text-shadow:4px 4px 0 #d0b48a;">SELECTED WORK</h2>
-    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:22px;">
-      <sc-for list="{{ projects }}" as="p" hint-placeholder-count="5">
-        <div class="pcard" style="position:relative; background:#fbf6ea; border:3px solid #d6c9ad; padding:24px; box-shadow:6px 6px 0 #d6c9ad; transition:transform .12s, box-shadow .12s, border-color .12s;" style-hover="transform:translate(-3px,-3px); box-shadow:10px 10px 0 #2a241c; border-color:#cc3a2e;">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
-            <span style="font-family:'Press Start 2P',monospace; font-size:26px; color:#d6c9ad;">{{ p.n }}</span>
-            <span style="font-family:'Press Start 2P',monospace; font-size:8px; color:#efe7d4; background:#cc3a2e; padding:6px 8px;">{{ p.year }}</span>
+  <h2 id="projects">Projects</h2>
+  <div class="pgrid">
+    <sc-for list="{{ projects }}" as="p" hint-placeholder-count="8">
+      <div class="pcard" onclick="{{ p.open }}" tabindex="0">
+        <div class="ptop"><span class="pcat">{{ p.category }}</span><span class="pyear">{{ p.year }}</span></div>
+        <div class="ptitle">{{ p.title }}</div>
+        <div class="pdesc">{{ p.summary }}</div>
+        <div class="ptags"><sc-for list="{{ p.tech }}" as="t" hint-placeholder-count="3"><span>{{ t }}</span></sc-for></div>
+        <div class="pmore">Read more →</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- OTHER EXPERIENCE -->
+  <h2>Other experience</h2>
+  <div class="tl">
+    <sc-for list="{{ work }}" as="t" hint-placeholder-count="3">
+      <div class="tl-row">
+        <div class="tl-date">{{ t.date }}</div>
+        <div class="tiles">
+          <div class="tile" style="{{ t.tileStyle }}">
+            <sc-if value="{{ t.logo }}" hint-placeholder-val="{{ false }}"><img src="{{ t.logo }}" alt="{{ t.org }}"></sc-if>
+            <sc-if value="{{ t.noLogo }}" hint-placeholder-val="{{ true }}">{{ t.mono }}</sc-if>
           </div>
-          <h3 style="font-family:'Press Start 2P',monospace; font-size:15px; color:#2a241c; margin:0 0 6px;">{{ p.title }}</h3>
-          <div style="font-family:'Press Start 2P',monospace; font-size:8px; color:#cc3a2e; margin-bottom:14px;">{{ p.tag }}</div>
-          <p style="font-size:20px; line-height:1.45; color:#4a4337; margin:0 0 16px;">{{ p.desc }}</p>
-          <div style="display:flex; flex-wrap:wrap; gap:7px;">
-            <sc-for list="{{ p.tech }}" as="t" hint-placeholder-count="3">
-              <span style="font-family:'Press Start 2P',monospace; font-size:7px; color:#8a7d68; border:2px solid #d6c9ad; padding:5px 7px;">{{ t }}</span>
-            </sc-for>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px;">
-            <span style="font-size:17px; color:#8a7d68;">↳ {{ p.org }}</span>
-            <span class="pgo" style="font-family:'Press Start 2P',monospace; font-size:9px; color:#cc3a2e; white-space:nowrap;">OPEN ▸</span>
+          <sc-if value="{{ t.logo2 }}" hint-placeholder-val="{{ false }}">
+            <div class="tile" style="{{ t.tile2Style }}"><img src="{{ t.logo2 }}" alt="{{ t.org }}"></div>
+          </sc-if>
+        </div>
+        <div class="tl-text">
+          <b>{{ t.title }}</b><span class="sub">{{ t.org }}</span>
+          <sc-if value="{{ t.hasPartners }}" hint-placeholder-val="{{ false }}">
+            <div class="partners">
+              <sc-for list="{{ t.partners }}" as="pt" hint-placeholder-count="4">
+                <span class="pchip" style="{{ pt.style }}" title="{{ pt.label }}">
+                  <sc-if value="{{ pt.logo }}" hint-placeholder-val="{{ false }}"><img src="{{ pt.logo }}" alt="{{ pt.label }}"></sc-if>
+                  <sc-if value="{{ pt.text }}" hint-placeholder-val="{{ false }}">{{ pt.text }}</sc-if>
+                </span>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div>{{ t.text }}</div>
+          <sc-if value="{{ t.hasCourses }}" hint-placeholder-val="{{ false }}">
+            <dl class="courses">
+              <sc-for list="{{ t.courses }}" as="c" hint-placeholder-count="4"><dt>{{ c.g }}</dt><dd>{{ c.items }}</dd></sc-for>
+            </dl>
+          </sc-if>
+          <div class="tl-links">
+            <sc-for list="{{ t.links }}" as="l" hint-placeholder-count="1"><a onclick="{{ l.open }}">{{ l.label }} →</a></sc-for>
           </div>
         </div>
-      </sc-for>
-    </div>
-  </section>
+      </div>
+    </sc-for>
+  </div>
 
-  <!-- EXPERIENCE -->
-  <section id="experience" data-reveal style="position:relative; z-index:10; max-width:1140px; margin:0 auto; padding:56px 28px;">
-    <div style="font-family:'Press Start 2P',monospace; font-size:10px; color:#cc3a2e; margin-bottom:14px;">// 04 — EXPERIENCE</div>
-    <h2 style="font-family:'Press Start 2P',monospace; font-size:24px; color:#2a241c; margin:0 0 28px; text-shadow:4px 4px 0 #d0b48a;">TIMELINE</h2>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:34px;">
-      <div>
-        <div style="font-family:'Press Start 2P',monospace; font-size:9px; color:#cc3a2e; margin-bottom:18px;">WORK LOG</div>
-        <sc-for list="{{ experiences }}" as="x" hint-placeholder-count="3">
-          <div style="position:relative; padding-left:24px; margin-bottom:22px; border-left:3px solid #d6c9ad;">
-            <div style="position:absolute; left:-9px; top:2px; width:15px; height:15px; background:#cc3a2e; box-shadow:0 0 0 3px #efe7d4;"></div>
-            <div style="font-family:'Press Start 2P',monospace; font-size:8px; color:#cc3a2e; margin-bottom:8px;">{{ x.period }}</div>
-            <div style="font-family:'Press Start 2P',monospace; font-size:12px; color:#2a241c; margin-bottom:6px;">{{ x.role }}</div>
-            <div style="font-size:19px; color:#cc3a2e; margin-bottom:6px;">{{ x.org }}</div>
-            <p style="font-size:19px; line-height:1.4; color:#4a4337; margin:0;">{{ x.desc }}</p>
-          </div>
-        </sc-for>
-      </div>
-      <div>
-        <div style="font-family:'Press Start 2P',monospace; font-size:9px; color:#cc3a2e; margin-bottom:18px;">EDUCATION</div>
-        <sc-for list="{{ education }}" as="e" hint-placeholder-count="3">
-          <div style="position:relative; padding-left:24px; margin-bottom:22px; border-left:3px solid #d6c9ad;">
-            <div style="position:absolute; left:-9px; top:2px; width:15px; height:15px; background:#cc3a2e; box-shadow:0 0 0 3px #efe7d4;"></div>
-            <div style="font-family:'Press Start 2P',monospace; font-size:8px; color:#cc3a2e; margin-bottom:8px;">{{ e.period }}</div>
-            <div style="font-family:'Press Start 2P',monospace; font-size:11px; color:#2a241c; margin-bottom:6px;">{{ e.school }}</div>
-            <p style="font-size:19px; line-height:1.4; color:#4a4337; margin:0;">{{ e.deg }}</p>
-          </div>
-        </sc-for>
-      </div>
-    </div>
-  </section>
+  <!-- PERSONAL -->
+  <h2>Outside work</h2>
+  <div class="ogrid">
+    <div class="ocard"><div class="olabel">Languages</div><div class="otitle">Quadrilingual</div><p>Arabic, French and Polish natively; English professionally (my whole Master's was in English).</p></div>
+    <div class="ocard"><div class="olabel">Sport</div><div class="otitle">Judo</div><p>Black belt.</p></div>
+    <div class="ocard"><div class="olabel">Speedcubing</div><div class="otitle">Rubik's Cube</div><p>Former champion, 17 s average.</p></div>
+    <div class="ocard"><div class="olabel">Side projects</div><div class="otitle">Making games</div><p>I create my own web-based games, and remake old classics so they run on modern hardware.</p></div>
+    <div class="ocard"><div class="olabel">Creative</div><div class="otitle">Photography</div></div>
+    <div class="ocard"><div class="olabel">Strategy</div><div class="otitle">Chess</div></div>
+  </div>
+  <p class="next">Next step: a <b>PhD in AI</b>.</p>
 
-  <!-- CONTACT -->
-  <section id="contact" data-reveal style="position:relative; z-index:10; max-width:1140px; margin:0 auto; padding:56px 28px 30px;">
-    <div style="background:linear-gradient(135deg,#fbf6ea,#f3ecda); border:4px solid #cc3a2e; box-shadow:9px 9px 0 #2a241c; padding:42px 34px; text-align:center;">
-      <div style="font-family:'Press Start 2P',monospace; font-size:10px; color:#cc3a2e; margin-bottom:16px;">// 05 — CONTACT</div>
-      <h2 style="font-family:'Press Start 2P',monospace; font-size:26px; color:#2a241c; margin:0 0 12px; text-shadow:4px 4px 0 #d0b48a;">LET'S TALK</h2>
-      <p style="font-size:23px; color:#4a4337; margin:0 0 30px;">Got a project, a role, or a research idea? Drop me a line.</p>
-      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:30px;">
-        <a href="mailto:djerbouame@gmail.com" style="font-family:'Press Start 2P',monospace; font-size:10px; color:#efe7d4; background:#cc3a2e; padding:15px 20px; text-decoration:none; box-shadow:5px 5px 0 #2a241c; transition:transform .1s,box-shadow .1s;" style-hover="transform:translate(-2px,-2px); box-shadow:7px 7px 0 #2a241c;" style-active="transform:translate(3px,3px); box-shadow:2px 2px 0 #2a241c;">✉ EMAIL ME</a>
-        <a href="tel:+33644974139" style="font-family:'Press Start 2P',monospace; font-size:10px; color:#cc3a2e; background:transparent; padding:15px 20px; text-decoration:none; border:3px solid #cc3a2e; transition:transform .1s; box-shadow:5px 5px 0 #d6c9ad;" style-hover="transform:translate(-2px,-2px); color:#a82e23;" style-active="transform:translate(3px,3px); box-shadow:2px 2px 0 #d6c9ad;">☎ +33 6 44 97 41 39</a>
-      </div>
-      <div style="display:flex; gap:28px; justify-content:center; flex-wrap:wrap; font-family:'Press Start 2P',monospace; font-size:8px; color:#8a7d68;">
-        <span>◈ PARIS, FR</span>
-        <span>◈ DRIVING LICENSE B</span>
-        <span>◈ djerbouame@gmail.com</span>
-      </div>
-    </div>
-    <div style="text-align:center; font-family:'Press Start 2P',monospace; font-size:8px; color:#b3a888; margin-top:30px; line-height:2;">© 2026 MEHDI DJERBOUA · BUILT WITH PIXELS &amp; CAFFEINE</div>
-  </section>
-
+  <footer>Mehdi Djerboua · Paris · <a href="mailto:djerbouame@gmail.com">djerbouame@gmail.com</a> · +33 6 44 97 41 39</footer>
 </div>
+
+<!-- CASE-STUDY PANEL -->
+<sc-if value="{{ cur }}" hint-placeholder-val="{{ false }}">
+  <div class="overlay" onclick="{{ closeFromBackdrop }}">
+    <div class="panel" role="dialog" aria-modal="true" aria-label="Project case study">
+      <div class="panel-head"><span>{{ cur.category }}</span><button class="close" onclick="{{ close }}">Close ✕</button></div>
+      <div class="panel-body">
+        <h3>{{ cur.title }}</h3>
+        <p class="summary">{{ cur.summary }}</p>
+        <div class="facts"><span><b>Year</b> {{ cur.year }}</span><span><b>Context</b> {{ cur.context }}</span><span><b>Role</b> {{ cur.role }}</span></div>
+
+        <sc-if value="{{ cur.hasDetails }}" hint-placeholder-val="{{ false }}">
+          <div class="cs"><h4>Problem</h4><sc-for list="{{ cur.d.problem }}" as="x" hint-placeholder-count="1"><p>{{ x }}</p></sc-for></div>
+          <div class="cs"><h4>State of the art</h4><sc-for list="{{ cur.d.stateOfArt }}" as="x" hint-placeholder-count="1"><p>{{ x }}</p></sc-for></div>
+          <div class="cs"><h4>My contribution</h4><ul><sc-for list="{{ cur.d.contribution }}" as="x" hint-placeholder-count="3"><li>{{ x }}</li></sc-for></ul></div>
+          <div class="cs"><h4>Technologies</h4><dl class="tech"><sc-for list="{{ cur.d.technologies }}" as="r" hint-placeholder-count="3"><dt>{{ r.k }}</dt><dd>{{ r.v }}</dd></sc-for></dl></div>
+          <div class="cs"><h4>Outcome</h4><sc-for list="{{ cur.d.outcome }}" as="x" hint-placeholder-count="1"><p>{{ x }}</p></sc-for></div>
+        </sc-if>
+
+        <sc-if value="{{ cur.noDetails }}" hint-placeholder-val="{{ true }}">
+          <div class="cs"><h4>Technologies</h4><p>{{ cur.techText }}</p></div>
+          <div class="soon">The full case study (problem, state of the art, contribution and outcome) is being written and will appear here soon.</div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;crtEffect&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;starfield&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.starRef = React.createRef();
-    this.state = { typed: '' };
-    this.roles = ['AI ENGINEER', 'DEVELOPER', 'AUTOMATION BUILDER', 'DESKTOP & WEB APPS', 'PHD-BOUND'];
+    this.state = { openId: null };
+    this.onKey = (e) => {
+      if (e.key === 'Escape') this.closeProject();
+      const row = e.target && e.target.closest && e.target.closest('.pcard');
+      if (row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); row.click(); }
+    };
+    this.onHash = () => this.syncFromHash();
   }
-
   componentDidMount() {
-    this.initStars();
-    this.initType();
-    requestAnimationFrame(() => this.initReveal());
+    window.addEventListener('keydown', this.onKey);
+    window.addEventListener('hashchange', this.onHash);
+    this.syncFromHash();
   }
-
-  initReveal() {
-    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
-    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) return;
-    const els = [...document.querySelectorAll('[data-reveal]')];
-    els.forEach((el) => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(26px)';
-      el.style.transition = 'opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1)';
-    });
-    this._io = new IntersectionObserver((ents) => {
-      ents.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.style.opacity = '1';
-          e.target.style.transform = 'none';
-          this._io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
-    els.forEach((el) => this._io.observe(el));
-  }
-
   componentWillUnmount() {
-    if (this._starRAF) cancelAnimationFrame(this._starRAF);
-    if (this._typeTimer) clearTimeout(this._typeTimer);
-    if (this._starResize) window.removeEventListener('resize', this._starResize);
-    if (this._io) this._io.disconnect();
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('hashchange', this.onHash);
   }
-
-  initType() {
-    let ri = 0, ci = 0, dir = 1;
-    const tick = () => {
-      const word = this.roles[ri];
-      ci += dir;
-      this.setState({ typed: word.slice(0, ci) });
-      let delay = 95;
-      if (dir > 0 && ci >= word.length) { dir = -1; delay = 1500; }
-      else if (dir < 0 && ci <= 0) { dir = 1; ri = (ri + 1) % this.roles.length; delay = 350; }
-      this._typeTimer = setTimeout(tick, delay);
-    };
-    tick();
+  // #project-demi style links open a case study directly.
+  syncFromHash() {
+    const m = /^#project-([a-z0-9-]+)$/.exec(window.location.hash || '');
+    const id = m && PROJECTS.some((p) => p.id === m[1]) ? m[1] : null;
+    if (id !== this.state.openId) this.setState({ openId: id });
+    document.body.classList.toggle('lock', !!id);
   }
-
-  initStars() {
-    const c = this.starRef.current;
-    if (!c) return;
-    const ctx = c.getContext('2d');
-    const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
-    resize();
-    this._starResize = resize;
-    window.addEventListener('resize', resize);
-    const cols = ['#cc3a2e', '#b5651d', '#d6c9ad', '#9a8f78'];
-    const stars = [];
-    for (let i = 0; i < 95; i++) {
-      stars.push({ x: Math.random(), y: Math.random(), s: Math.random() < 0.18 ? 2 : 1, sp: 0.15 + Math.random() * 0.5, tw: Math.random() * 6.28, c: cols[Math.floor(Math.random() * cols.length)] });
-    }
-    const loop = (now) => {
-      ctx.clearRect(0, 0, c.width, c.height);
-      if (this.props.starfield !== false) {
-        for (const s of stars) {
-          s.y += s.sp / c.height;
-          if (s.y > 1) { s.y -= 1; s.x = Math.random(); }
-          const a = 0.35 + 0.55 * Math.abs(Math.sin(now / 650 + s.tw));
-          ctx.globalAlpha = a;
-          ctx.fillStyle = s.c;
-          ctx.fillRect(Math.floor(s.x * c.width), Math.floor(s.y * c.height), s.s * 2, s.s * 2);
-        }
-        ctx.globalAlpha = 1;
-      }
-      this._starRAF = requestAnimationFrame(loop);
-    };
-    this._starRAF = requestAnimationFrame(loop);
+  openProject(id) { history.pushState(null, '', '#project-' + id); this.syncFromHash(); }
+  closeProject() {
+    if (!this.state.openId) return;
+    history.pushState(null, '', location.pathname + location.search);
+    this.syncFromHash();
   }
 
   renderVals() {
+    const tile = (c) => 'background:' + c + ';';
+    const logoTile = 'background:#fff; border:1px solid var(--line); padding:6px 8px;';
+    const withLogo = (t) => ({ ...t, courses: t.courses || [], hasCourses: !!(t.courses && t.courses.length), partners: t.partners || [], hasPartners: !!(t.partners && t.partners.length), noLogo: !t.logo, tileStyle: !t.logo ? t.tileStyle : t.logoBg ? 'background:' + t.logoBg + '; padding:7px;' : logoTile });
+    const link = (id, label) => ({ label, open: () => this.openProject(id) });
+    const cur = PROJECTS.find((p) => p.id === this.state.openId);
     return {
-      starRef: this.starRef,
-      typed: this.state.typed,
-      showCrt: this.props.crtEffect !== false,
-      showStars: this.props.starfield !== false,
-      stats: [
-        { v: '10+', k: 'PROJECTS' },
-        { v: '4', k: 'QUADRILINGUAL' },
-        { v: '23s', k: "RUBIK'S CUBE PRO SOLVER" }
-      ],
-      languages: [
-        { l: 'Arabic', lvl: 'NATIVE' },
-        { l: 'French', lvl: 'NATIVE' },
-        { l: 'Polish', lvl: 'NATIVE' },
-        { l: 'English', lvl: 'PRO' }
-      ],
-      interests: ['Photography', 'Chess', 'Judo', "Rubik's Cube"],
-      skillGroups: [
-        { name: 'LANGUAGES', items: ['Python', 'Java', 'C / C++', 'Assembly', 'JavaScript', 'PHP', 'Bash', 'SQL', 'HTML / CSS', 'XML', 'MATLAB', 'Julia'] },
-        { name: 'AI & DATA', items: ['Machine Learning', 'Statistics', 'Probability', 'Linear Programming'] },
-        { name: 'SYSTEMS', items: ['Embedded Linux', 'Device Drivers (C / Python)', 'USB Gadgets', 'Networking'] },
-        { name: 'INFRA & TOOLS', items: ['Docker', 'FIWARE Framework', 'NGSI-LD', 'Databases (SQL / NoSQL)', 'Git / GitHub', 'OOP'] }
-      ],
-      projects: [
-        { n: '01', title: 'DEMI', tag: 'DIGITAL TWIN · EV', year: '2026', desc: 'A digital-twin platform for EV charging infrastructure across Cloud–Edge–IoT. Built data pipelines and live dashboards for real-time monitoring.', tech: ['FIWARE/NGSI-LD', 'CrateDB', 'Python', 'Docker'], org: 'LVMT Lab · ENPC Paris-Saclay' },
-        { n: '02', title: 'AGENT DEV TEAM', tag: 'MULTI-AGENT · LOCAL LLMs', year: '2025', desc: 'A multi-agent system running local LLMs that spins up a team of developer agents to build software together — planning, coding and reviewing each other. By collaborating, even weak local models produced near-perfect programs, far beyond what a single model could do alone.', tech: ['Local LLMs', 'Multi-Agent', 'Python'], org: 'CNAM Paris' },
-        { n: '03', title: 'LINUX USB GADGETS', tag: 'EMBEDDED · DEVICE DRIVERS', year: '2025', desc: 'Built USB device drivers from scratch (HID, mass storage) in C and Python, working with microcontrollers like BeagleBoard and Raspberry Pi — handling low-level device logic, networking and embedded-Linux performance tuning. Yes, I write drivers.', tech: ['C', 'Python', 'BeagleBoard', 'Raspberry Pi', 'Embedded Linux'], org: 'CNAM Paris' },
-        { n: '04', title: 'WEBSITES', tag: 'WEB · END-TO-END', year: 'ONGOING', desc: 'Designed and built 5+ websites end-to-end — from online boutiques to service sites (maintenance and more) — handling the design, development, hosting and deployment myself.', tech: ['WordPress', 'PHP', 'JavaScript', 'HTML/CSS', 'Hosting'], org: 'Freelance / Personal' },
-        { n: '05', title: 'EMAIL AUTOMATION', tag: 'AUTOMATION · MARKETING', year: '2024', desc: 'Built an automated email-sending system for advertising campaigns — engineered to reliably land in the inbox and avoid being flagged as spam at scale.', tech: ['Python', 'SMTP', 'Automation'], org: 'Freelance' },
-        { n: '06', title: 'MARKOV VISUALIZER', tag: 'DATA VISUALIZATION', year: '2022', desc: 'Interactive matrix & automata input with visualization, enabling clearer analysis of states and transitions.', tech: ['JavaFX', 'Java', 'SQL'], org: 'Academic Project' },
-        { n: '07', title: 'PHARMACY MANAGER', tag: 'DESKTOP APP', year: '2022', desc: 'JavaFX desktop application with inventory, billing and staff modules — streamlining daily operations with reliable data handling.', tech: ['JavaFX', 'Java', 'SQL'], org: 'Academic Project' }
-      ],
-      experiences: [
-        { role: 'Research Intern', org: 'LVMT Lab · ENPC Paris-Saclay', period: 'MAR – AUG 2026', desc: 'Developed DEMI, a digital-twin platform for EV charging infrastructure (Cloud–Edge–IoT).' },
-        { role: 'Summer Intern', org: 'CNAM Paris', period: '2025', desc: 'Built Linux USB gadget drivers and strengthened embedded & low-level programming.' },
-        { role: 'Translator & Interpreter', org: 'EQUIP AUTO Algeria — SAFEX, Algiers', period: 'MAR 2023', desc: 'Translation & interpretation (Arabic · French · Polish · English) at the 16th EQUIP AUTO Algeria trade show. Recommended by the Embassy of Poland.' }
-      ],
-      education: [
-        { school: 'CNAM PARIS', deg: "Master's — AI for Connected Industries (M2)", period: '2024 – PRESENT' },
-        { school: 'USDB UNIVERSITY', deg: 'BSc Computer Science & Mathematics. Worked on configuring the Ansys simulation software.', period: '2020 – 2023' },
-        { school: 'BACCALAUREATE', deg: 'Mathematics — Algeria', period: '2019 – 2020' }
-      ]
+      cur: cur ? { ...cur, hasDetails: !!cur.d, noDetails: !cur.d, techText: cur.tech.join(' · ') } : null,
+      close: () => this.closeProject(),
+      closeFromBackdrop: (e) => { if (e.target === e.currentTarget) this.closeProject(); },
+      get timeline() { return this.allEntries.filter((t) => t.kind !== 'work'); },
+      get work() { return this.allEntries.filter((t) => t.kind === 'work'); },
+      projects: PROJECTS.map((p) => ({ ...p, tileStyle: tile(p.color), open: () => this.openProject(p.id) })),
+      allEntries: [
+        { date: '2026', mono: 'LVMT', logo: 'uploads/logos/enpc2024-crop.png', tileStyle: tile('#1f4e8c'), title: 'Research intern', org: 'LVMT, joint lab of École des Ponts and Université Gustave Eiffel',
+          partners: [
+            { logo: 'uploads/logos/lvmt-crop.png', style: 'background:#fff;', label: 'LVMT — Laboratoire Ville Mobilité Transport' },
+            { logo: 'uploads/logos/e4c.png', style: 'background:#fff;', label: 'E4C — Energy4Climate, IP Paris' },
+            { logo: 'uploads/logos/cnam.png', style: 'background:#fff;', label: 'CNAM' },
+            { logo: 'uploads/logos/uge.png', style: 'background:#4b4b4b;', label: 'Université Gustave Eiffel' }
+          ],
+          text: 'Six months turning an early prototype into DEMI, a complete digital twin of smart campus buildings: EV chargers, solar panels, batteries and building energy, with live dashboards and an assistant running on local AI that answers questions in plain English.',
+          links: [link('demi', 'DEMI')] },
+        { date: '2024 – 2026', mono: 'CN', logo: 'uploads/logos/cnam.png', tileStyle: tile('#c8102e'), title: 'M.Sc. Computer Science — AI for Connected Industries', org: 'CNAM Paris',
+          text: 'A Master\'s taught entirely in English, on AI for industry and the Internet of Things. Along the way I built a team of AI agents that write and test code together, and a low-power music player on a microcontroller.',
+          courses: [
+            { g: 'AI & data', items: 'Generative AI · AI for networks and IoT · Green AI computing · Operations research · Advanced Python' },
+            { g: 'Systems & industry', items: 'Industrial IoT · Smart Industry 4.0 · Robot Operating System (ROS) · Embedded systems · Network security · Parallel and distributed systems' }
+          ],
+          links: [link('code-crew', 'Code Generation Crew'), link('arduino-music', 'Arduino Music Player')] },
+        { date: '2025', mono: 'CN', logo: 'uploads/logos/cnam.png', tileStyle: tile('#c8102e'), title: 'Summer intern — Linux USB Gadgets', org: 'CNAM Paris',
+          text: 'Embedded Linux on a BeagleBone board: making it appear to a computer as a USB drive, a network card or an input device such as a touchpad, set up to start on its own.',
+          links: [link('usb-gadgets', 'USB Gadgets')] },
+        { kind: 'work', date: '2022 – now', mono: 'FL', logo: 'uploads/logos/freelance.svg', tileStyle: tile('#2f7d4f'), title: 'Freelance developer', org: 'Self-employed',
+          text: 'Websites for businesses in equipment sales and repair, AI training and construction services, from design to hosting, plus an automated email-campaign tool.',
+          links: [link('websites', 'Websites'), link('email-automation', 'Email automation')] },
+        { kind: 'work', date: '2024', mono: 'PL', logo: 'uploads/logos/poland.png', tileStyle: tile('#a1112f'), title: 'Election assistant', org: 'Embassy of Poland',
+          text: 'Helped organise voting events at the embassy.',
+          links: [] },
+        { kind: 'work', date: '2023', mono: 'MM', logo: 'uploads/logos/marmot-ring.png', logoBg: '#7a1f1f', tileStyle: tile('#7a1f1f'), title: 'Translator & interpreter', org: 'MAR-MOT, Polish piston-ring manufacturer',
+          text: 'Translation and interpretation for the company in Arabic, French, Polish and English, on the recommendation of the Embassy of Poland.',
+          links: [] },
+        { date: '2020 – 2023', mono: 'US', logo: 'uploads/logos/usdb.png', tileStyle: tile('#0f7a8a'), title: 'B.Sc. Computer Science — Computer Systems', org: 'University of Blida 1 (USDB), Algeria',
+          text: 'A three-year degree in mathematics and computer science, specialised in computer systems. Final-year project: a web platform to manage a shared computer lab. I also built desktop apps in JavaFX, before AI coding assistants existed.',
+          courses: [
+            { g: 'AI & software', items: 'Artificial intelligence · Algorithms and data structures · Object-oriented programming · Software engineering · Compilation' },
+            { g: 'Systems & data', items: 'Computer security · Operating systems · Networks · Databases · Web and mobile development' },
+            { g: 'Mathematics', items: 'Graph theory · Linear programming · Probability and statistics' }
+          ],
+          links: [link('lab-management', 'Lab platform'), link('markov', 'Markov visualiser'), link('pharmacy', 'Pharmacy manager')] },
+        { date: '2020', mono: 'BAC', tileStyle: tile('#006233'), title: 'Baccalaureate in Mathematics', org: 'Algeria',
+          text: 'Secondary-school diploma with a mathematics specialisation.',
+          links: [] }
+      ].map(withLogo)
     };
   }
 }
+
+/* ---------------------------------------------------------------------------
+   PROJECTS — one entry per project. `d` holds the full case study; projects
+   without `d` show their overview and a "coming soon" note until it is written.
+   d = { problem:[...], stateOfArt:[...], contribution:[...],
+         technologies:[{k,v}], outcome:[...] }
+--------------------------------------------------------------------------- */
+const PROJECTS = [
+  { id: 'demi', mono: 'DT', color: '#1f4e8c', title: 'DEMI — Digital twin of smart buildings', category: 'Digital twin · AI', year: '2026',
+    context: 'Research internship', role: 'Design & development',
+    summary: 'A complete digital twin of smart campus buildings, with live dashboards and a natural-language assistant powered by local AI.',
+    tech: ['Python', 'FIWARE / NGSI-LD', 'CrateDB', 'Local LLMs', 'JavaScript', 'Docker'] },
+  { id: 'code-crew', mono: 'AI', color: '#6a4bc4', title: 'Code Generation Crew', category: 'Multi-agent AI', year: '2025',
+    context: 'M.Sc. project', role: 'Design & development',
+    summary: 'AI agents on local models that write, review and test code together in a closed feedback loop until the program works.',
+    tech: ['Python', 'Local LLMs', 'LangGraph', 'pytest'] },
+  { id: 'camera-driver', mono: 'CM', color: '#d0601a', title: 'Driver for an undocumented camera', category: 'Embedded · Reverse engineering', year: '2026',
+    context: 'Personal project', role: 'Solo',
+    summary: 'A cheap pan-tilt camera with no usable driver: I mapped how it really moves, then wrote a driver to control it and capture photos and video.',
+    tech: ['ESP32', 'C / C++', 'Python'] },
+  { id: 'usb-gadgets', mono: 'USB', color: '#3b5566', title: 'Linux USB Gadgets', category: 'Embedded Linux', year: '2025',
+    context: 'Summer internship · CNAM', role: 'Development',
+    summary: 'A BeagleBone board that becomes a USB drive, a network card or a touchpad when plugged into a computer.',
+    tech: ['Embedded Linux', 'C', 'Python', 'BeagleBone'] },
+  { id: 'arduino-music', mono: '♪', color: '#00878a', title: 'Arduino Music Player', category: 'IoT · Embedded', year: '2025',
+    context: 'M.Sc. course project', role: 'Design & development',
+    summary: 'A low-power educational music player with a screen and LEDs that visualise the notes, squeezed into a microcontroller\'s memory.',
+    tech: ['Arduino', 'C / C++', 'IoT'] },
+  { id: 'websites', mono: 'WEB', color: '#2f7d4f', title: 'Business websites', category: 'Web · Freelance', year: '2022 – now',
+    context: 'Freelance', role: 'Design to deployment',
+    summary: 'Showcase and sales websites for businesses in equipment sales and repair, AI training and construction services.',
+    tech: ['WordPress', 'PHP', 'HTML / CSS', 'JavaScript'] },
+  { id: 'email-automation', mono: '@', color: '#b8860b', title: 'Email campaign automation', category: 'Automation · Freelance', year: '2024',
+    context: 'Freelance', role: 'Solo',
+    summary: 'A desktop tool that sends advertising campaigns at a natural pace during business hours, so the emails land in the inbox, not in spam.',
+    tech: ['Python', 'Tkinter', 'Outlook automation', 'pandas'] },
+  { id: 'lab-management', mono: 'LAB', color: '#0f7a8a', title: 'Computer-lab management platform', category: 'Web platform', year: '2023',
+    context: 'B.Sc. final-year project', role: 'Front-end lead',
+    summary: 'A web platform to share a lab\'s computers between many users: allocation, monitoring and blocking users, with admin and user roles.',
+    tech: ['React', 'JavaScript', 'PHP', 'HTML / CSS'] },
+  { id: 'markov', mono: 'MK', color: '#5a6b2f', title: 'Markov chain visualiser', category: 'Desktop app', year: '2023',
+    context: 'B.Sc. project', role: 'Solo',
+    summary: 'Draw a Markov chain and get its matrix, or fill a matrix and get the graph with directed, weighted arrows.',
+    tech: ['Java', 'JavaFX', 'OOP'] },
+  { id: 'pharmacy', mono: 'Rx', color: '#3d8b3d', title: 'Pharmacy manager', category: 'Desktop app', year: '2023',
+    context: 'B.Sc. project', role: 'Solo',
+    summary: 'A desktop app to run a pharmacy: inventory, purchases and sales, and stock monitoring.',
+    tech: ['Java', 'JavaFX', 'SQL'] }
+];
 </script>
 </body>
 </html>
