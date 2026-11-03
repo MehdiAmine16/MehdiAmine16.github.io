@@ -638,13 +638,62 @@ const PROJECTS = [
       ]
     } },
   { id: 'markov', mono: 'MK', color: '#5a6b2f', title: 'Markov chain visualiser', category: 'Desktop app', year: '2023',
-    context: 'B.Sc. project', role: 'Solo',
+    context: 'B.Sc. project', role: 'Design & development',
     summary: 'Draw a Markov chain and get its matrix, or fill a matrix and get the graph with directed, weighted arrows.',
-    tech: ['Java', 'JavaFX', 'OOP'] },
+    tech: ['Java', 'JavaFX', 'OOP'],
+    d: {
+      problem: [
+        'A Markov chain can be written in two ways: as a transition matrix, a table of probabilities, or as a graph of states connected by weighted arrows. Students and teachers constantly switch between the two, and doing it by hand is slow and error-prone, especially drawing the graph cleanly with every arrow, direction and probability in the right place.',
+        'The goal was a desktop application that converts automatically in both directions: fill in a matrix and get the graph, or build a graph and get the matrix.'
+      ],
+      stateOfArt: [
+        'At the time, the usual options were drawing graphs by hand, general-purpose drawing software, or writing scripts in mathematical tools. None of them offered a simple interface that goes both ways between matrix and graph. The project was built before AI coding assistants existed, so every part of the interface and the drawing logic had to be designed and written by hand.'
+      ],
+      contribution: [
+        'Built the application in Java with JavaFX, organised in a model, view and controller structure.',
+        'Matrix to graph: an editable matrix whose size can be increased or decreased, which generates the graph with one node per state and a directed, weighted arrow for every non-zero transition.',
+        'Graph to matrix: the user places and names the states, adds arrows with their probabilities, and the application produces the corresponding transition matrix.',
+        'Wrote a custom arrow component that draws a line with a correctly oriented arrowhead and keeps it attached to its nodes, since JavaFX has no built-in directed arrows.',
+        'Added input validation with clear error messages, for example when the probabilities leaving a state do not add up correctly or a state name is too long.',
+        'Designed the navigation between screens: home, matrix input, graph input and generated graph.'
+      ],
+      technologies: [
+        { k: 'Language', v: 'Java' },
+        { k: 'Interface', v: 'JavaFX (scenes, layouts, shapes, custom components)' },
+        { k: 'Design', v: 'Object-oriented programming, model–view–controller structure' }
+      ],
+      outcome: [
+        'A working tool that turns a Markov chain from matrix to graph and back in a few clicks, with clean, readable graphs. Not a huge project, but a real challenge at the time: building interactive graph drawing by hand in JavaFX, without any AI help.'
+      ]
+    } },
   { id: 'pharmacy', mono: 'Rx', color: '#3d8b3d', title: 'Pharmacy manager', category: 'Desktop app', year: '2023',
     context: 'B.Sc. project', role: 'Solo',
     summary: 'A desktop app to run a pharmacy: inventory, purchases and sales, and stock monitoring.',
-    tech: ['Java', 'JavaFX', 'SQL'] }
+    tech: ['Java', 'JavaFX', 'SQL'],
+    d: {
+      problem: [
+        'A pharmacy has to know at every moment what it has in stock, what it bought and what it sold. Doing this on paper or in scattered spreadsheets leads to errors, products running out without warning, and no clear view of daily activity.',
+        'The goal was a desktop application that brings inventory, purchases, sales and stock monitoring together in one place.'
+      ],
+      stateOfArt: [
+        'Professional pharmacy software exists, but it is complete, expensive and built for large organisations. Small pharmacies often fall back on spreadsheets, which do not prevent mistakes and do not update stock automatically when something is bought or sold.'
+      ],
+      contribution: [
+        'Built the application on my own in Java with JavaFX.',
+        'Product inventory: adding and managing the products the pharmacy holds.',
+        'Purchases and sales: recording what comes in and what goes out, with the stock updated accordingly.',
+        'Stock monitoring, to follow quantities and see what is running low.',
+        'Stored all data in an SQL database, so the information is kept reliably between sessions.'
+      ],
+      technologies: [
+        { k: 'Language', v: 'Java' },
+        { k: 'Interface', v: 'JavaFX' },
+        { k: 'Data', v: 'SQL database' }
+      ],
+      outcome: [
+        'A simple, working management application that keeps a pharmacy\'s inventory, purchases, sales and stock in one place. One of my first complete desktop applications, built in the final year of my bachelor\'s degree.'
+      ]
+    }
 ];
 </script>
 </body>
