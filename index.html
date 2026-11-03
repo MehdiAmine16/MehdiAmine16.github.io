@@ -464,11 +464,62 @@ const PROJECTS = [
   { id: 'camera-driver', mono: 'CM', color: '#d0601a', title: 'Driver for an undocumented camera', category: 'Embedded · Reverse engineering', year: '2026',
     context: 'Personal project', role: 'Solo',
     summary: 'A cheap pan-tilt camera with no usable driver: I mapped how it really moves, then wrote a driver to control it and capture photos and video.',
-    tech: ['ESP32', 'C / C++', 'Python'] },
+    tech: ['ESP32', 'C / C++', 'Python'],
+    d: {
+      problem: [
+        'I had a cheap pan-tilt camera, the kind sold to be used only through the manufacturer\'s phone app. There was no driver to control it from my own programs. A few low-level functions existed, but they were undocumented: I could make the camera move, but not know in which direction, along which axis, or by how much.',
+        'The goal was to take full control of the camera from my own code: point it precisely, and take photos or record video exactly when I need to.'
+      ],
+      stateOfArt: [
+        'Low-cost Wi-Fi cameras usually work only through their vendor\'s app and cloud. Standard camera protocols are often missing or only partly supported, and when low-level commands exist they are rarely documented, so open-source tools either do not support these models or only offer basic video viewing.'
+      ],
+      contribution: [
+        'Explored the camera\'s low-level functions and found which ones actually make it move.',
+        'Measured its real behaviour by observing it physically: sending commands, watching how the camera actually turned, and recording the results.',
+        'Used those measurements to work out what each command really does: which axis it moves, in which direction and by how much.',
+        'Wrote a driver on top of this model that moves the camera to where I want it, instead of sending blind commands.',
+        'Added photo and video capture on demand, controlled from my own programs.'
+      ],
+      technologies: [
+        { k: 'Hardware', v: 'ESP32 microcontroller, low-cost pan-tilt Wi-Fi camera' },
+        { k: 'Languages', v: 'C, C++, Python' },
+        { k: 'Methods', v: 'Reverse engineering by observation, behaviour measurement and calibration' }
+      ],
+      outcome: [
+        'A camera that was only usable through its own app can now be controlled precisely from my own code, and takes pictures or videos whenever I ask it to. A personal project, done for the fun of making cheap hardware do things it was never designed for.'
+      ]
+    } },
   { id: 'usb-gadgets', mono: 'USB', color: '#3b5566', title: 'Linux USB Gadgets', category: 'Embedded Linux', year: '2025',
     context: 'Summer internship · CNAM', role: 'Development',
     summary: 'A BeagleBone board that becomes a USB drive, a network card or a touchpad when plugged into a computer.',
-    tech: ['Embedded Linux', 'C', 'Python', 'BeagleBone'] },
+    tech: ['Embedded Linux', 'C', 'Python', 'BeagleBone'],
+    d: {
+      problem: [
+        'Small Linux boards such as the BeagleBone Black can do more than act as tiny computers: plugged into a PC over USB, they can pretend to be a USB device, such as a network card, a USB drive or an input device. This "USB gadget" mode is useful for embedded products and test benches.',
+        'In practice it is hard to set up. Documentation is scattered, the board keeps falling back to its default network mode, settings disappear after a reboot, and sharing the PC\'s internet connection with the board breaks easily.'
+      ],
+      stateOfArt: [
+        'Linux supports USB gadgets in two ways: older single-purpose modules, each turning the board into one kind of device, and the more recent ConfigFS framework, which lets several functions be combined into one composite device (storage, network, serial and input at once). Most tutorials online cover only one case, are written for older systems, or skip the steps needed to make the setup survive a reboot.'
+      ],
+      contribution: [
+        'Set up the board from scratch: flashed a Debian IoT image onto a microSD card and configured it at first boot through a serial console.',
+        'Made the board work as a network card over USB, with the PC sharing its internet connection (IP forwarding, NAT with iptables, DNS), and tested connectivity end to end.',
+        'Diagnosed and fixed a bug where internet access stopped after installing a desktop environment on the board, then made the fix permanent with a systemd service and persistent firewall rules.',
+        'Gave the board a remote graphical desktop through VNC.',
+        'Configured the board as a USB drive with ConfigFS, creating a FAT disk image and getting past the board\'s habit of always presenting itself as a network device.',
+        'Programmed the board to appear as an input device such as a touchpad.',
+        'Wrote a complete step-by-step guide with ready-to-use scripts, so the whole setup can be reproduced from a blank board.'
+      ],
+      technologies: [
+        { k: 'Hardware', v: 'BeagleBone Black, microSD, USB OTG' },
+        { k: 'System', v: 'Debian Linux, Linux USB gadget framework (ConfigFS, libcomposite), systemd' },
+        { k: 'Networking', v: 'IP forwarding, NAT with iptables, DNS, VNC' },
+        { k: 'Languages & tools', v: 'Bash, C, Python, serial console (Minicom), balenaEtcher' }
+      ],
+      outcome: [
+        'The board reliably shows up as the USB device we choose (network card, storage or input device), and the configuration survives reboots. The guide and scripts let the next person go from a blank board to a working setup without repeating the same trial and error.'
+      ]
+    } },
   { id: 'arduino-music', mono: '♪', color: '#00878a', title: 'Arduino Music Player', category: 'IoT · Embedded', year: '2025',
     context: 'M.Sc. course project', role: 'Design & development',
     summary: 'A low-power educational music player with a screen and LEDs that visualise the notes, squeezed into a microcontroller\'s memory.',
