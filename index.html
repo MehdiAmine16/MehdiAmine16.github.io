@@ -431,7 +431,36 @@ const PROJECTS = [
   { id: 'code-crew', mono: 'AI', color: '#6a4bc4', title: 'Code Generation Crew', category: 'Multi-agent AI', year: '2025',
     context: 'M.Sc. project', role: 'Design & development',
     summary: 'AI agents on local models that write, review and test code together in a closed feedback loop until the program works.',
-    tech: ['Python', 'Local LLMs', 'LangGraph', 'pytest'] },
+    tech: ['Python', 'Local LLMs', 'LangGraph', 'pytest'],
+    d: {
+      problem: [
+        'A single AI model asked to write code often produces something that looks right but does not run, misses edge cases, or quietly answers a different question. The problem gets worse with small models that run on a personal computer: they are private, free and offline, but much less reliable than large cloud models.',
+        'The question behind this project: can several small local models, each with one clear job and checking each other\'s work, produce code that actually works, without sending anything to the cloud?'
+      ],
+      stateOfArt: [
+        'Code assistants built on large cloud models have become very capable, but they need an internet connection, an API key, and sending your code to an external service. Research on "self-debugging" and on multi-agent frameworks shows that letting models review, test and correct their own output improves results, since the program can be run and the errors fed back.',
+        'Most of that work, however, relies on the largest available models. Much less is known about how far the same ideas can carry small models that fit on a laptop.'
+      ],
+      contribution: [
+        'Designed a team of AI agents with separate responsibilities: one turns a vague request into a precise specification, one writes the code, one reviews it without running it, and one writes and runs unit tests.',
+        'Built a closed feedback loop: when the review or the tests fail, the exact errors go back to the agent writing the code, which tries again with that context until the program passes, within a configurable number of attempts.',
+        'Added automatic test generation, so every program is checked against tests written for that specific request, plus a style check that reports issues without blocking the result.',
+        'Ran everything on local models through Ollama, with no API keys and no data leaving the machine, and made it easy to switch between several open models.',
+        'Built a desktop application around it: prompt, refined specification and generated code in resizable panels, syntax highlighting, saved sessions with their full history, and one-click opening in VS Code.',
+        'Created a benchmark of tasks from easy to very hard, written both as short simple requests and as detailed specifications, to measure how well the system really performs.'
+      ],
+      technologies: [
+        { k: 'Language', v: 'Python' },
+        { k: 'AI & agents', v: 'LangGraph (multi-agent workflow), LangChain, local LLMs through Ollama' },
+        { k: 'Quality checks', v: 'pytest (generated unit tests), Flake8 (style)' },
+        { k: 'Interface', v: 'Tkinter desktop app, Pygments syntax highlighting, VS Code integration' },
+        { k: 'Tooling', v: 'Docker, shell scripts, benchmark runner' }
+      ],
+      outcome: [
+        'Working together in the loop, small local models produced correct, tested programs on the large majority of the benchmark, including every one of the hardest tasks.',
+        'An unexpected finding: the system did better with detailed, precise requests than with short ones. Clear specifications reduce ambiguity and help the agents agree, which is exactly what the specification step is there for.'
+      ]
+    } },
   { id: 'camera-driver', mono: 'CM', color: '#d0601a', title: 'Driver for an undocumented camera', category: 'Embedded · Reverse engineering', year: '2026',
     context: 'Personal project', role: 'Solo',
     summary: 'A cheap pan-tilt camera with no usable driver: I mapped how it really moves, then wrote a driver to control it and capture photos and video.',
