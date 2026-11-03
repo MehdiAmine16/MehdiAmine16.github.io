@@ -523,11 +523,62 @@ const PROJECTS = [
   { id: 'arduino-music', mono: '♪', color: '#00878a', title: 'Arduino Music Player', category: 'IoT · Embedded', year: '2025',
     context: 'M.Sc. course project', role: 'Design & development',
     summary: 'A low-power educational music player with a screen and LEDs that visualise the notes, squeezed into a microcontroller\'s memory.',
-    tech: ['Arduino', 'C / C++', 'IoT'] },
+    tech: ['Arduino', 'C / C++', 'IoT'],
+    d: {
+      problem: [
+        'Students learning music and students learning programming rarely get a tool that connects the two. Music education often relies on expensive instruments or software, and programming exercises often lack a tangible, creative result you can actually hear and see.',
+        'The goal was a small, affordable and low-power device that plays music while showing how it works: which note is playing, at which frequency, and how a microcontroller produces it.'
+      ],
+      stateOfArt: [
+        'Phones and MP3 players play music perfectly well, but they hide everything that happens inside. Arduino music projects exist, but most play a single tune and quickly run out of memory: the Arduino Uno has very little RAM, so storing many melodies and driving a screen at the same time is a real constraint.'
+      ],
+      contribution: [
+        'Designed the full device around an Arduino Uno: a passive buzzer for precise notes, an OLED screen, a row of LEDs with one LED per note of the scale, and push buttons for play, pause, next, previous and volume.',
+        'Wrote the firmware in C/C++ as a non-blocking loop, so the device stays responsive to the buttons while music is playing, with debouncing for reliable presses.',
+        'Optimised memory so a whole library of melodies fits: melodies stored in flash memory instead of RAM, compact data structures, only the selected melody loaded, and the screen redrawn only when needed.',
+        'Added live memory monitoring to track free RAM and prevent crashes, which made it possible to keep the screen and the full melody library together.',
+        'Synchronised the LEDs with the notes, so each note lights its own LED and the melody turns into a light show that shows the scale.',
+        'Designed an IoT extension with a WiFi module connected to the Arduino, to download new melodies, share compositions and connect to classroom or smart-home systems.'
+      ],
+      technologies: [
+        { k: 'Hardware', v: 'Arduino Uno, passive buzzer, SSD1306 OLED display (I2C), LEDs, push buttons' },
+        { k: 'Language', v: 'C / C++ (Arduino)' },
+        { k: 'Libraries', v: 'Wire (I2C), Adafruit GFX, Adafruit SSD1306, avr/pgmspace (flash storage)' },
+        { k: 'Tools', v: 'Wokwi simulator' }
+      ],
+      outcome: [
+        'A working music player, with the complete code and a demo running in the Wokwi simulator: it plays a library of well-known melodies, shows the song and volume on screen and lights the matching LED for every note, while staying within the Arduino\'s tight memory limits.',
+        'Built for an M.Sc. course on sustainable IoT, the project shows how careful memory management makes a very small, low-power board do much more than expected.'
+      ]
+    } },
   { id: 'websites', mono: 'WEB', color: '#2f7d4f', title: 'Business websites', category: 'Web · Freelance', year: '2022 – now',
     context: 'Freelance', role: 'Design to deployment',
     summary: 'Showcase and sales websites for businesses in equipment sales and repair, AI training and construction services.',
-    tech: ['WordPress', 'PHP', 'HTML / CSS', 'JavaScript'] },
+    tech: ['WordPress', 'PHP', 'HTML / CSS', 'JavaScript'],
+    d: {
+      problem: [
+        'Small businesses win most of their clients online: people search for a service in their area, compare a few websites and ask for a quote. Without a clear, credible site that explains their offer and makes it easy to get in touch, they lose those clients to competitors.',
+        'Each of the businesses I worked with needed a site that presents a wide range of services clearly, works well on phones, and turns visitors into quote requests.'
+      ],
+      stateOfArt: [
+        'Website builders and ready-made themes make it easy to put a page online, but generic templates rarely fit a business with many services, regional coverage or specific requests. Fully custom development, on the other hand, is costly for a small company and hard for it to update. A content management system such as WordPress, carefully structured and configured, sits in between: professional, affordable and easy to keep up to date.'
+      ],
+      contribution: [
+        'Built the sites end to end on my own: understanding each business, structuring the content, design, development, hosting and deployment.',
+        'An equipment sales, rental and repair company: product and service catalogue, brand-specific repair pages, spare parts, maintenance contracts, training, and quote requests.',
+        'An AI training organisation: course catalogues for companies and individuals, course pages, trainer profiles, a blog, regional pages and an interactive online test.',
+        'A rope-access building contractor: services organised by type of work, pages for each area served, a project gallery, safety and certification information, and an emergency contact.',
+        'Designed every site around clear navigation, mobile-friendly layouts and visible calls to action leading to contact and quote forms.'
+      ],
+      technologies: [
+        { k: 'Platform', v: 'WordPress' },
+        { k: 'Languages', v: 'PHP, HTML, CSS, JavaScript' },
+        { k: 'Delivery', v: 'Hosting, domain and deployment setup, ongoing updates' }
+      ],
+      outcome: [
+        'The businesses got professional, easy-to-navigate websites that present their whole offer and bring in contact and quote requests, and that they can keep updating themselves. Detailed client names stay private.'
+      ]
+    } },
   { id: 'email-automation', mono: '@', color: '#b8860b', title: 'Email campaign automation', category: 'Automation · Freelance', year: '2024',
     context: 'Freelance', role: 'Solo',
     summary: 'A desktop tool that sends advertising campaigns at a natural pace during business hours, so the emails land in the inbox, not in spam.',
