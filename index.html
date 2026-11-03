@@ -582,11 +582,61 @@ const PROJECTS = [
   { id: 'email-automation', mono: '@', color: '#b8860b', title: 'Email campaign automation', category: 'Automation · Freelance', year: '2024',
     context: 'Freelance', role: 'Solo',
     summary: 'A desktop tool that sends advertising campaigns at a natural pace during business hours, so the emails land in the inbox, not in spam.',
-    tech: ['Python', 'Tkinter', 'Outlook automation', 'pandas'] },
+    tech: ['Python', 'Tkinter', 'Outlook automation', 'pandas'],
+    d: {
+      problem: [
+        'A client wanted to reach many professional contacts, such as sports clubs and hotels, with an advertising campaign. Sending that many emails by hand takes days, and sending them all at once from one account is the fastest way to be flagged as spam: messages end up in junk folders or the account gets blocked.',
+        'The goal was a tool that sends a personalised campaign automatically, at a pace that looks like normal human activity, so the emails actually reach the inbox.'
+      ],
+      stateOfArt: [
+        'Email marketing platforms solve deliverability with dedicated sending infrastructure, but they are paid, require importing the contact list into an external service, and do not send from the company\'s own mailbox. Simple mail-merge tools send from your own account but fire everything at once, with no control over pace, timing or duplicates.'
+      ],
+      contribution: [
+        'Built a desktop application that loads contact lists from Excel files, checks every address and sends a personalised HTML email through the company\'s own Outlook mailbox.',
+        'Made sending look natural: random limits per minute, per hour and per day, pauses between batches, and an adjustable speed cap.',
+        'Restricted sending to business hours on working days, with French public holidays calculated automatically, including the movable ones that depend on Easter.',
+        'Kept a log of everything sent, tied to each campaign, so a contact never receives the same campaign twice, even after a restart.',
+        'Added one-click unsubscribe headers, as mailbox providers expect from legitimate senders.',
+        'Added previews and draft creation, so a campaign can be checked before anything is sent, and improved the tool through many successive versions.'
+      ],
+      technologies: [
+        { k: 'Language', v: 'Python' },
+        { k: 'Interface', v: 'Tkinter desktop application' },
+        { k: 'Email', v: 'Microsoft Outlook automation (win32com), HTML email templates, List-Unsubscribe headers' },
+        { k: 'Data', v: 'pandas, Excel contact lists, sent-email log' }
+      ],
+      outcome: [
+        'The client could run campaigns to large contact lists from their own mailbox without doing anything by hand, with emails sent at a natural pace during working hours and reaching inboxes instead of spam folders. The client\'s name stays private.'
+      ]
+    } },
   { id: 'lab-management', mono: 'LAB', color: '#0f7a8a', title: 'Computer-lab management platform', category: 'Web platform', year: '2023',
     context: 'B.Sc. final-year project', role: 'Front-end lead',
     summary: 'A web platform to share a lab\'s computers between many users: allocation, monitoring and blocking users, with admin and user roles.',
-    tech: ['React', 'JavaScript', 'PHP', 'HTML / CSS'] },
+    tech: ['React', 'JavaScript', 'PHP', 'HTML / CSS'],
+    d: {
+      problem: [
+        'In a university lab, many students and researchers need the same computers at the same times. Without a system, the result is conflicts, machines taken without notice, nobody knowing who used what, and no way for the lab managers to step in when someone misuses the equipment.',
+        'The goal of our final-year project was a web platform to organise the lab: who can use which computer and when, with oversight for the people running it.'
+      ],
+      stateOfArt: [
+        'Many labs still rely on paper sign-up sheets, shared spreadsheets or messaging groups, which give no real-time view and no control. Generic booking tools exist, but they are not built around shared computers, user accounts with different roles, and the monitoring a lab needs.'
+      ],
+      contribution: [
+        'Worked in a team of three, where I led the front end: the interface every user and administrator sees.',
+        'Designed and built the main screens: sign-up and login, the dashboard, a calendar for booking computers, notifications, statistics charts, user profiles and a research section.',
+        'Built the interface around the allocation system, so users can see which computers are available and book them, and administrators can follow activity and block users when needed.',
+        'Handled the different roles in the interface, with administrators and regular users each seeing what they need.',
+        'Connected the interface to the platform\'s PHP back end, built with the Laravel framework.'
+      ],
+      technologies: [
+        { k: 'Front end', v: 'HTML, CSS, JavaScript, React, Laravel Blade templates, Vite' },
+        { k: 'Back end', v: 'PHP, Laravel framework' },
+        { k: 'Features', v: 'Authentication, role-based access, booking calendar, notifications, charts' }
+      ],
+      outcome: [
+        'A working web platform that lets a lab share its computers between many users in an organised way, with booking, monitoring and administration in one place. It was our B.Sc. final-year project and my first large team project.'
+      ]
+    } },
   { id: 'markov', mono: 'MK', color: '#5a6b2f', title: 'Markov chain visualiser', category: 'Desktop app', year: '2023',
     context: 'B.Sc. project', role: 'Solo',
     summary: 'Draw a Markov chain and get its matrix, or fill a matrix and get the graph with directed, weighted arrows.',
