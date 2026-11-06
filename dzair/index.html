@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dzair Underground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  @font-face { font-family: 'Pally'; src: url('./assets/fonts/Pally-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+  @font-face { font-family: 'Pally'; src: url('./assets/fonts/Pally-Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+  :root {
+    --panel: rgba(255, 255, 255, 0.72);
+    --panel-border: rgba(120, 160, 200, 0.35);
+    --ink: #0f2233;
+    --muted: #5a7389;
+    --accent: #0a84ff;
+    --hot: #ff3b30;
+    --ok: #20b26b;
+    --warn: #ff9f0a;
+  }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #e8f1fa; font-family: "Pally", "Inter", system-ui, -apple-system, Segoe UI, sans-serif; color: var(--ink); }
+  canvas { display: block; }
+  .panel { position: absolute; background: var(--panel); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--panel-border); border-radius: 14px; box-shadow: 0 8px 30px rgba(30, 80, 130, 0.12); }
+  #speedo { right: 18px; bottom: 18px; width: 290px; padding: 14px 18px 16px; }
+  #speedo .row { display: flex; align-items: flex-end; justify-content: space-between; }
+  #spd { font-size: 64px; font-weight: 800; line-height: 0.9; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
+  #spdUnit { font-size: 13px; color: var(--muted); font-weight: 600; margin-left: 4px; }
+  #gear { font-size: 54px; font-weight: 800; color: var(--accent); line-height: 0.9; min-width: 44px; text-align: right; }
+  #kmh { font-size: 13px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .bar { position: relative; height: 10px; background: rgba(15, 34, 51, 0.08); border-radius: 6px; overflow: hidden; margin-top: 10px; }
+  .bar > i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #5ac8fa, #0a84ff); border-radius: 6px; }
+  .bar > b { position: absolute; top: 0; bottom: 0; background: rgba(255, 59, 48, 0.25); }
+  #rpmTxt { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .inputs { display: grid; grid-template-columns: 52px 1fr; gap: 4px 8px; margin-top: 10px; font-size: 11px; color: var(--muted); align-items: center; }
+  .inputs .bar { margin: 0; height: 7px; }
+  #steerBar > i { left: 50%; background: #8e8cff; }
+  #thrBar > i { background: var(--ok); }
+  #brkBar > i { background: var(--hot); }
+  #ebBar > i { background: var(--warn); }
+  #tele { left: 18px; top: 18px; width: 300px; padding: 12px 14px; font-size: 12px; }
+  #tele h3 { margin: 0 0 8px; font-size: 13px; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .kv { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-variant-numeric: tabular-nums; }
+  .kv span:nth-child(odd) { color: var(--muted); }
+  .kv span:nth-child(even) { font-weight: 600; text-align: right; }
+  .tires { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+  .tire { border-radius: 9px; padding: 6px 8px; background: rgba(32, 178, 107, 0.12); border: 1px solid rgba(32, 178, 107, 0.25); font-size: 11px; line-height: 1.35; font-variant-numeric: tabular-nums; transition: background 0.08s; }
+  .tire b { display: block; font-size: 10px; color: var(--muted); letter-spacing: 0.5px; }
+  #drift { margin-top: 8px; padding: 6px 8px; border-radius: 9px; font-weight: 700; font-size: 12px; text-align: center; background: rgba(15,34,51,0.06); color: var(--muted); }
+  #drift.on { background: rgba(255, 159, 10, 0.2); color: #b36200; }
+  #help { left: 18px; bottom: 18px; padding: 10px 14px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+  #help kbd { display: inline-block; min-width: 18px; padding: 0 5px; border-radius: 5px; background: #fff; border: 1px solid #c9d8e6; color: var(--ink); font: 600 11px/18px system-ui; text-align: center; margin-right: 3px; }
+  #lap { left: 50%; top: 16px; transform: translateX(-50%); padding: 8px 18px; font-size: 13px; display: flex; gap: 18px; font-variant-numeric: tabular-nums; }
+  #lap span { color: var(--muted); } #lap b { color: var(--ink); }
+  #loading { position: absolute; inset: 0; display: grid; place-items: center; background: #eef5fc; font-size: 15px; color: var(--muted); z-index: 10; }
+  #sb { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 160px rgba(10, 132, 255, 0.45); opacity: 0; transition: opacity 0.2s; }
+  /* round speedometer */
+  #speedo { width: 230px !important; padding: 14px !important; border-radius: 26px; }
+  .gauge { position: relative; width: 200px; height: 200px; margin: 0 auto; }
+  .gauge svg { width: 200px; height: 200px; }
+  .gauge circle { fill: none; stroke-width: 12; stroke-linecap: round; }
+  .g-bg { stroke: rgba(15, 34, 51, 0.09); }
+  .g-red { stroke: rgba(255, 59, 48, 0.35); }
+  .g-rpm { stroke: #0a84ff; transition: stroke 0.1s; filter: drop-shadow(0 0 6px rgba(10, 132, 255, 0.45)); }
+  .g-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .gauge #spd { font: 700 58px/0.9 Pally, sans-serif; letter-spacing: -1px; }
+  .gauge #spdUnit { font: 700 13px Pally, sans-serif; color: var(--muted); margin-top: 6px; }
+  .gauge #gear { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); min-width: 38px; padding: 2px 10px; border-radius: 12px;
+    background: var(--accent); color: #fff; font: 700 22px/1.3 Pally, sans-serif; text-align: center; }
+  #minimap { position: absolute; left: 18px; bottom: 18px; width: 190px; height: 190px; border-radius: 50%;
+    box-shadow: 0 8px 30px rgba(30, 80, 130, 0.18); pointer-events: none; }
+  body.nohud #minimap { display: none; }
+  /* minimal HUD: only speed + gear unless debug mode (T) */
+  body:not(.debug) #tele, body:not(.debug) #help, body:not(.debug) #lap,
+  body:not(.debug) #speedo .bar, body:not(.debug) #rpmTxt, body:not(.debug) #speedo .inputs, body:not(.debug) #kmh { display: none; }
+  body:not(.debug) #speedo .row { gap: 22px; align-items: center; }
+  .gauges { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+  .g { height: 6px; border-radius: 4px; background: rgba(15,34,51,0.08); overflow: hidden; }
+  .g i { display: block; height: 100%; border-radius: 4px; transition: width 0.1s; }
+  .g.nos i { background: linear-gradient(90deg, #5ac8fa, #0a84ff); }
+  .g.sbm i { background: linear-gradient(90deg, #ffd60a, #ff9f0a); }
+  .g.on { box-shadow: 0 0 0 2px rgba(10,132,255,0.35); }
+  .g.sbm.on { box-shadow: 0 0 0 2px rgba(255,159,10,0.4); }
+  #nosfx { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.15s; background: radial-gradient(ellipse at center, transparent 55%, rgba(90, 200, 250, 0.28)); }
+  #toast { position: absolute; left: 50%; top: 22%; transform: translate(-50%, 6px); padding: 8px 16px; border-radius: 10px; background: rgba(255,255,255,0.85); color: var(--ink); font-weight: 700; font-size: 14px; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; box-shadow: 0 6px 20px rgba(30,80,130,0.15); }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  body.nohud #speedo, body.nohud #toast { display: none; }
+  #menu { position: absolute; inset: 0; display: none; place-items: center; background: rgba(220, 236, 251, 0.55); backdrop-filter: blur(6px); z-index: 5; overflow-y: auto; padding: 16px; box-sizing: border-box; }
+  #menu.open { display: grid; }
+  #menu .card { width: min(560px, 100%); background: rgba(255,255,255,0.92); border-radius: 18px; padding: 22px 26px; box-shadow: 0 20px 60px rgba(30,80,130,0.2); }
+  #menu h2 { margin: 0 0 14px; font-size: 22px; } #menu h3 { margin: 18px 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+  #menu button, #menu select { font: 700 13px Pally, system-ui; border-radius: 9px; border: 1px solid #c9d8e6; background: #f3f8fd; color: var(--ink); padding: 7px 12px; cursor: pointer; }
+  #menu .actions { display: flex; gap: 8px; } #menu .actions button:first-child { background: var(--accent); color: #fff; border-color: var(--accent); }
+  #menu .opts { display: grid; grid-template-columns: 110px 1fr; gap: 8px 12px; align-items: center; margin-top: 14px; font-size: 13px; color: var(--muted); }
+  #menu .opts > *:nth-child(even) { justify-self: start; min-width: 170px; text-align: left; }
+  #menu .keys { display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; font-size: 13px; align-items: center; }
+  #menu kbd { display: inline-block; min-width: 18px; padding: 0 6px; margin-right: 3px; border-radius: 5px; background: #fff; border: 1px solid #c9d8e6; font: 700 11px/20px Pally, system-ui; text-align: center; }
+  #menu .pad { font-size: 12px; color: var(--muted); margin: 14px 0 0; line-height: 1.5; }
+  @media (max-width: 760px) { #tele, #help { display: none; } #speedo { width: 220px; } #spd { font-size: 46px; } #gear { font-size: 40px; } }
+
+  /* ---------- Bruno-style theme: dark plum plates, white Amatic SC, diamond markers ---------- */
+  :root { --plate: rgba(37, 24, 33, 0.92); --plate-hi: rgba(64, 40, 56, 0.95); --cream: #fff4f2; --rose: #ff87a2; }
+  .amatic { font-family: 'Amatic SC', cursive; }
+  #speedo { background: none !important; border: none !important; color: #fff; width: auto !important; min-width: 0 !important; padding: 0 !important; right: 28px !important; bottom: 22px !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important;
+    filter: drop-shadow(0 2px 0 rgba(27, 18, 24, 0.9)) drop-shadow(0 0 8px rgba(27, 18, 24, 0.55)); }
+  .sp { display: flex; align-items: center; gap: 18px; }
+  .sp-main { display: flex; align-items: baseline; gap: 6px; }
+  .sp #spd { font: 700 72px/0.82 'Amatic SC', cursive; color: #fff; min-width: 2.3ch; text-align: right; letter-spacing: 1px; }
+  .sp #spdUnit { font: 700 22px 'Amatic SC', cursive; color: rgba(255, 255, 255, 0.7); margin: 0; }
+  .diamond { width: 46px; height: 46px; transform: rotate(45deg); border: 3px solid #fff; background: #1b1218; display: grid; place-items: center; border-radius: 4px; margin-right: 6px; }
+  .diamond span { transform: rotate(-45deg); font: 700 32px/1 'Amatic SC', cursive; color: #fff; position: static !important; background: none !important; padding: 0 !important; min-width: 0 !important; }
+  .sp-rpm { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; margin-top: 10px; }
+  .sp-rpm i { height: 7px; border-radius: 2px; background: rgba(255, 255, 255, 0.28); }
+  .sp-rpm i.red { background: rgba(255, 77, 94, 0.3); }
+  .sp-rpm i.on { background: #fff; } .sp-rpm i.on.red { background: #ff4d5e; }
+  #speedo .gauges .g { background: rgba(255, 255, 255, 0.13); }
+  #toast { background: var(--plate); color: #fff; font: 700 30px 'Amatic SC', cursive; letter-spacing: 0.5px; border-radius: 6px; padding: 4px 18px; box-shadow: 0 8px 24px rgba(20, 10, 18, 0.3); }
+  #minimap { box-shadow: none !important; border-radius: 0 !important; left: 22px !important; bottom: 18px !important; width: 220px !important; height: 220px !important; filter: drop-shadow(0 2px 6px rgba(27, 18, 24, 0.45)); }
+  /* race HUD */
+  #raceHud { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 3; }
+  #raceHud.hidden { display: none; }
+  #raceHud .plate { background: var(--plate); color: #fff; border-radius: 6px; padding: 2px 14px 4px; text-align: center; min-width: 70px; box-shadow: 0 8px 24px rgba(20, 10, 18, 0.3); }
+  #raceHud .plate b { display: block; font: 700 18px/1 'Amatic SC', cursive; color: var(--rose); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+  #raceHud .plate span { font: 700 34px/1.05 'Amatic SC', cursive; }
+  #countdown { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%) rotate(-4deg); font: 700 160px/1 'Amatic SC', cursive; color: #fff; text-shadow: 0 6px 0 #251821, 0 0 30px rgba(37, 24, 33, 0.6); pointer-events: none; z-index: 4; }
+  /* menu overlays */
+  .overlay { position: absolute; inset: 0; display: none; place-items: center; z-index: 8; background: rgba(28, 16, 24, 0.35); backdrop-filter: blur(5px); padding: 16px; box-sizing: border-box; overflow-y: auto; }
+  .overlay.open { display: grid; }
+  .qcard { width: min(640px, 100%); background: var(--plate); color: #fff; border-radius: 12px; padding: 22px 28px 26px; box-shadow: 0 24px 60px rgba(20, 10, 18, 0.45); font-family: 'Nunito', sans-serif; }
+  .qcard h1 { margin: 0 0 14px; font: 700 64px/1 'Amatic SC', cursive; text-align: center; letter-spacing: 2px; }
+  .qcard h1::before, .qcard h1::after { content: ''; display: inline-block; width: 12px; height: 12px; border: 3px solid var(--rose); transform: rotate(45deg); margin: 0 18px 12px; }
+  .qrow { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: center; margin: 10px 0; }
+  .ql { font: 700 28px 'Amatic SC', cursive; color: var(--rose); letter-spacing: 1px; }
+  .qopts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .qswatch { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+  .qswatch button, .qswatch label { width: 30px; height: 30px; padding: 0; border-radius: 50%; border: 3px solid rgba(255,255,255,0.85); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.25); position: relative; overflow: hidden; transition: transform .12s; }
+  .qswatch button:hover, .qswatch label:hover { transform: scale(1.12); }
+  .qswatch .sel { outline: 3px solid #ff87a2; outline-offset: 2px; }
+  .qswatch .orig { background: conic-gradient(#2f7fd0 0 25%, #c81e2c 0 50%, #f5c518 0 75%, #1f9a52 0); }
+  .qswatch label { background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red); }
+  .qswatch label input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+  .qcard button, .qcard select { font: 700 24px 'Amatic SC', cursive; letter-spacing: 0.5px; color: #fff; background: var(--plate-hi); border: 2px solid rgba(255, 255, 255, 0.18); border-radius: 6px; padding: 2px 14px; cursor: pointer; }
+  .qcard select { font: 800 15px 'Nunito', sans-serif; padding: 8px 10px; max-width: 260px; }
+  .qcard select option { color: #251821; }
+  .qcard button.sel { background: var(--cream); color: #251821; border-color: var(--cream); }
+  .qcard button.sel::before { content: '◆ '; color: #ff4d5e; }
+  .qcard button:disabled { opacity: 0.35; cursor: default; }
+  .qcar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .qcard .big { display: block; margin: 20px auto 6px; font-size: 44px; padding: 2px 46px; background: var(--cream); color: #251821; border: none; }
+  .qcard .big::before, .qcard .big::after { content: '◆'; color: #ff4d5e; margin: 0 14px; font-size: 26px; vertical-align: middle; }
+  .qhint { text-align: center; margin: 8px 0 0; font-size: 13px; color: rgba(255, 255, 255, 0.6); }
+  .qbtns { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
+  .qbtns button { font-size: 34px; padding: 2px 28px; }
+  #resBody { font: 700 26px/1.25 'Amatic SC', cursive; }
+  #resBody table { width: 100%; border-collapse: collapse; }
+  #resBody td { padding: 2px 8px; } #resBody td:last-child { text-align: right; }
+  #resBody tr.me { color: var(--rose); }
+  #resBody .laps { font: 700 22px 'Amatic SC', cursive; color: rgba(255, 255, 255, 0.75); margin-top: 10px; text-align: center; }
+  /* pause menu in the same theme */
+  #menu .card { background: var(--plate); color: #fff; font-family: 'Nunito', sans-serif; }
+  #menu h2 { font: 700 56px/1 'Amatic SC', cursive; text-align: center; letter-spacing: 2px; }
+  #menu h3, #menu .opts, #menu .pad { color: rgba(255, 255, 255, 0.7); }
+  #menu .opts > span:nth-child(odd) { font: 700 24px 'Amatic SC', cursive; color: var(--rose); }
+  #menu button, #menu select { background: var(--plate-hi); color: #fff; border: 2px solid rgba(255, 255, 255, 0.18); font: 700 22px 'Amatic SC', cursive; }
+  #menu select { font: 800 14px 'Nunito', sans-serif; } #menu select option { color: #251821; }
+  #menu .actions button:first-child { background: var(--cream); color: #251821; border-color: var(--cream); }
+  #menu kbd { background: var(--plate-hi); color: #fff; border-color: rgba(255, 255, 255, 0.25); }
+  #menu .keys { color: rgba(255, 255, 255, 0.85); }
+
+  /* ---------- quick race front end: menu left, live 3D showroom / map flyover right ---------- */
+  #loading { background: #251821 !important; color: #fff !important; }
+  #loading b { display: block; font: 700 96px/1 'Amatic SC', cursive; letter-spacing: 3px; text-align: center; }
+  #loading span { display: block; font: 700 30px 'Amatic SC', cursive; color: var(--rose); text-align: center; margin-top: 6px; }
+  #qr.overlay { background: linear-gradient(90deg, rgba(28, 16, 24, 0.78) 0%, rgba(28, 16, 24, 0.45) 38%, rgba(28, 16, 24, 0) 62%); backdrop-filter: none; place-items: center start; pointer-events: none; padding: 0 0 0 4vw; }
+  #qr .qcard { pointer-events: auto; width: min(560px, 92vw); margin-top: 90px; }
+  #qr .qcard h1 { font-size: 52px; }
+  .qr-title { position: absolute; left: 4vw; top: 22px; font: 700 104px/1 'Amatic SC', cursive; color: #fff; letter-spacing: 4px; text-shadow: 0 5px 0 #251821, 0 0 30px rgba(37, 24, 33, 0.5); pointer-events: none; }
+  .qr-title::after { content: ''; display: inline-block; width: 18px; height: 18px; border: 4px solid var(--rose); transform: rotate(45deg); margin-left: 20px; vertical-align: middle; }
+  .qr-view { position: absolute; right: 28px; top: 26px; display: flex; gap: 8px; align-items: center; pointer-events: auto; }
+  .qr-view button { font: 700 30px 'Amatic SC', cursive; color: #fff; background: var(--plate); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 0 18px; cursor: pointer; }
+  .qr-view button.sel { background: var(--cream); color: #251821; }
+  .qr-view button.sel::before { content: '◆ '; color: #ff4d5e; }
+  .qr-drag { font: 700 22px 'Amatic SC', cursive; color: #fff; text-shadow: 0 2px 0 #251821; margin-left: 8px; }
+  .qr-info { position: absolute; right: 28px; bottom: 26px; width: 330px; background: var(--plate); color: #fff; border-radius: 10px; padding: 14px 20px 16px; pointer-events: none; font-family: 'Nunito', sans-serif; box-shadow: 0 18px 50px rgba(20, 10, 18, 0.4); }
+  .qr-info h2 { margin: 0 0 6px; font: 700 42px/1 'Amatic SC', cursive; letter-spacing: 1px; }
+  .qr-info .sub { font: 700 22px 'Amatic SC', cursive; color: var(--rose); margin-bottom: 8px; }
+  .qr-info .stat { display: grid; grid-template-columns: 92px 1fr 64px; gap: 8px; align-items: center; margin: 5px 0; font: 700 22px 'Amatic SC', cursive; }
+  .qr-info .bar { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
+  .qr-info .bar i { display: block; height: 100%; background: linear-gradient(90deg, #ff87a2, #fff4f2); border-radius: 4px; transition: width 0.35s; }
+  .qr-info .stat em { font-style: normal; text-align: right; color: rgba(255, 255, 255, 0.85); }
+  .qr-info p { margin: 6px 0 0; font-size: 13px; color: rgba(255, 255, 255, 0.72); }
+  body.inmenu #speedo, body.inmenu #minimap, body.inmenu #raceHud, body.inmenu #countdown { display: none !important; }
+  @media (max-width: 900px) { .qr-title { font-size: 64px; } .qr-info { display: none; } #qr .qcard { margin-top: 70px; } }
+
+  .vols { display: grid; gap: 4px; width: 100%; }
+  .vol { display: grid; grid-template-columns: 70px 1fr 48px; align-items: center; gap: 10px; font: 700 22px 'Amatic SC', cursive; color: #fff; }
+  .vol output { text-align: right; color: rgba(255, 255, 255, 0.8); }
+  .vol input[type=range] { -webkit-appearance: none; appearance: none; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.18); outline: none; }
+  .vol input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--cream); border: 3px solid #ff4d5e; transform: rotate(45deg); border-radius: 3px; cursor: pointer; }
+  .vol input[type=range]::-moz-range-thumb { width: 14px; height: 14px; background: var(--cream); border: 3px solid #ff4d5e; border-radius: 3px; cursor: pointer; }
+
+  /* ---------- step-by-step menu ---------- */
+  #qr section { display: none; } #qr section.on { display: block; animation: qin 0.25s ease; }
+  @keyframes qin { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+  .qcrumbs { display: flex; justify-content: center; gap: 6px; font: 700 22px 'Amatic SC', cursive; color: rgba(255, 255, 255, 0.4); margin-bottom: 2px; }
+  .qcrumbs span.on { color: var(--rose); } .qcrumbs span.done { color: rgba(255, 255, 255, 0.8); }
+  .qcrumbs i { font-style: normal; color: rgba(255, 255, 255, 0.25); }
+  .qtiles { display: grid; gap: 10px; }
+  .qtiles button { display: grid; text-align: left; padding: 8px 16px 10px !important; }
+  .qtiles button b { font: 700 36px/1 'Amatic SC', cursive; } .qtiles button small { font: 600 13px 'Nunito', sans-serif; opacity: 0.8; margin-top: 2px; }
+  .qtiles button.sel::before { content: none !important; }
+  .qtiles button.sel b::before { content: '◆ '; color: #ff4d5e; }
+  .qcarousel { display: grid; grid-template-columns: 54px 1fr 54px; align-items: center; gap: 10px; margin: 8px 0 14px; }
+  .qcarousel .arrow { font: 700 56px/0.8 'Amatic SC', cursive !important; padding: 0 0 8px !important; height: 64px; }
+  .qcname { text-align: center; } .qcname b { display: block; font: 700 44px/1 'Amatic SC', cursive; }
+  .qcname small { font: 700 20px 'Amatic SC', cursive; color: var(--rose); }
+  .qnav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+  .qnav .big { margin: 0 !important; }
+  #qrBack.hide { visibility: hidden; }
+  #qrNext:disabled { opacity: 0.4; }
+
+  .qcname.swap b, .qcname.swap small { animation: qswap 0.55s ease; }
+  @keyframes qswap { 0% { opacity: 1; } 35% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: none; } }
+
+  /* ---------- pause: a short list of actions, nothing else ---------- */
+  #menu { background: rgba(28, 16, 24, 0.5) !important; backdrop-filter: blur(4px); }
+  #menu .pcard { width: min(400px, 92vw); background: var(--plate); border-radius: 12px; padding: 22px 26px 18px; box-shadow: 0 24px 60px rgba(20, 10, 18, 0.45); color: #fff; }
+  #menu h2 { margin: 0; font: 700 72px/1 'Amatic SC', cursive; text-align: center; letter-spacing: 3px; }
+  #menu .pctx { text-align: center; font: 700 22px 'Amatic SC', cursive; color: var(--rose); margin: 2px 0 14px; }
+  #menu .pnav { display: grid; gap: 8px; }
+  #menu .pnav button { font: 700 32px/1.25 'Amatic SC', cursive; text-align: left; padding: 4px 18px; border-radius: 8px; background: var(--plate-hi); color: #fff; border: 2px solid rgba(255, 255, 255, 0.14); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  #menu .pnav button:hover, #menu .pnav button:focus-visible { border-color: var(--rose); outline: none; }
+  #menu .pnav button:hover::after { content: '›'; color: var(--rose); }
+  #menu .pnav button.primary { background: var(--cream); color: #251821; border-color: var(--cream); }
+  #menu .pnav button.primary::before { content: '◆'; color: #ff4d5e; font-size: 22px; margin-right: 10px; }
+  #menu .pnav button.primary { justify-content: flex-start; }
+  #menu .pnav button.quiet { background: transparent; color: rgba(255, 255, 255, 0.75); margin-top: 6px; font-size: 26px; }
+  #menu .pnav kbd, #settings kbd { display: inline-block; min-width: 18px; padding: 0 6px; border-radius: 5px; background: var(--plate-hi); border: 1px solid rgba(255, 255, 255, 0.25); color: #fff; font: 800 11px/20px 'Nunito', sans-serif; text-align: center; margin: 0 1px; }
+  #menu .phint { text-align: center; margin: 12px 0 0; font: 600 12px 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.55); }
+  /* ---------- settings screen ---------- */
+  #settings { position: fixed; inset: 0; z-index: 12; display: none; place-items: center; background: rgba(28, 16, 24, 0.55); backdrop-filter: blur(5px); padding: 16px; box-sizing: border-box; }
+  #settings.open { display: grid; }
+  #settings .sbox { width: min(980px, 100%); height: min(640px, 100%); display: grid; grid-template-rows: auto 1fr; background: var(--plate); border-radius: 14px; box-shadow: 0 30px 80px rgba(20, 10, 18, 0.5); color: #fff; font-family: 'Nunito', sans-serif; overflow: hidden; }
+  #settings header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 12px 18px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  #settings header h2 { margin: 0; font: 700 60px/1 'Amatic SC', cursive; letter-spacing: 3px; }
+  #settings header h2::before, #settings header h2::after { content: ' ◆ '; color: var(--rose); font-size: 26px; vertical-align: middle; }
+  #settings .sback { justify-self: start; }
+  #settings .ssaved { justify-self: end; font: 700 22px 'Amatic SC', cursive; color: #9be37a; opacity: 0; transition: opacity 0.3s; }
+  #settings .ssaved.show { opacity: 1; }
+  #settings button { font: 700 24px/1.2 'Amatic SC', cursive; color: #fff; background: var(--plate-hi); border: 2px solid rgba(255, 255, 255, 0.14); border-radius: 7px; padding: 2px 14px; cursor: pointer; }
+  #settings button:hover { border-color: var(--rose); }
+  #settings .sbody { display: grid; grid-template-columns: 230px 1fr; min-height: 0; }
+  #settings .stabs { display: grid; align-content: start; gap: 6px; padding: 16px 12px 16px 18px; border-right: 1px solid rgba(255, 255, 255, 0.1); }
+  #settings .stabs button { text-align: left; display: grid; padding: 6px 14px 8px; background: transparent; border-color: transparent; }
+  #settings .stabs button b { font: 700 34px/1 'Amatic SC', cursive; }
+  #settings .stabs button small { font: 600 12px 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.6); margin-top: 2px; }
+  #settings .stabs button.sel { background: var(--cream); color: #251821; border-color: var(--cream); }
+  #settings .stabs button.sel small { color: rgba(37, 24, 33, 0.65); }
+  #settings .stabs button.sel b::before { content: '◆ '; color: #ff4d5e; font-size: 22px; }
+  #settings .spane { display: none; overflow-y: auto; padding: 10px 26px 20px; }
+  #settings .spane.on { display: block; animation: qin 0.2s ease; }
+  #settings h4 { margin: 14px 0 4px; font: 700 15px 'Nunito', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; color: var(--rose); }
+  #settings .srow { display: grid; grid-template-columns: minmax(180px, 1fr) auto; gap: 18px; align-items: center; padding: 10px 12px; border-radius: 8px; }
+  #settings .srow:hover { background: rgba(255, 255, 255, 0.05); }
+  #settings .srow b { display: block; font: 700 30px/1 'Amatic SC', cursive; }
+  #settings .srow small { display: block; font: 600 12.5px/1.4 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.62); margin-top: 2px; }
+  #settings .sctl { display: flex; gap: 6px; align-items: center; justify-content: flex-end; }
+  #settings .sctl.wrap { flex-wrap: wrap; max-width: 420px; }
+  #settings .sctl input[type=range] { width: 240px; -webkit-appearance: none; appearance: none; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.18); outline: none; }
+  #settings .sctl input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--cream); border: 3px solid #ff4d5e; transform: rotate(45deg); border-radius: 3px; cursor: pointer; }
+  #settings .sctl input[type=range]::-moz-range-thumb { width: 15px; height: 15px; background: var(--cream); border: 3px solid #ff4d5e; border-radius: 3px; cursor: pointer; }
+  #settings .sctl output { width: 48px; text-align: right; font: 700 24px 'Amatic SC', cursive; color: rgba(255, 255, 255, 0.85); }
+  #settings .seg button.sel { background: var(--cream); color: #251821; border-color: var(--cream); }
+  #settings .seg button.solo { margin-left: 8px; }
+  #settings footer { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+  #settings footer button { background: transparent; color: rgba(255, 255, 255, 0.75); font-size: 22px; }
+  #settings .snote { font: 600 13px/1.5 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.6); margin: 14px 12px 0; }
+  #settings .keys2 { display: grid; grid-template-columns: 170px 1fr; gap: 7px 16px; align-items: center; padding: 4px 12px; font: 600 14px 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.88); }
+  @media (max-width: 720px) { #settings .sbody { grid-template-columns: 1fr; } #settings .stabs { grid-auto-flow: column; overflow-x: auto; border-right: 0; } #settings .stabs small { display: none; } #settings .srow { grid-template-columns: 1fr; } #settings .sctl { justify-content: flex-start; flex-wrap: wrap; } }
+
+  /* ---------- Dzair Underground: story scenes (same plate / rose / cream theme) ---------- */
+  #dzStory { position: fixed; inset: 0; pointer-events: none; z-index: 9; font-family: 'Nunito', sans-serif; }
+  #dzStory .dz-card { position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%) rotate(-3deg); text-align: center; color: #fff; opacity: 0; transition: opacity 0.6s; text-shadow: 0 6px 0 #251821, 0 0 30px rgba(37, 24, 33, 0.6); }
+  #dzStory .dz-card.show { opacity: 1; }
+  #dzStory .dz-chapter { font: 700 40px/1 'Amatic SC', cursive; color: var(--rose); letter-spacing: 3px; }
+  #dzStory .dz-title { font: 700 120px/1 'Amatic SC', cursive; letter-spacing: 4px; }
+  #dzStory .dz-box { position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); width: min(860px, 94vw); display: none; grid-template-columns: 116px 1fr; gap: 16px; align-items: center;
+    background: var(--plate); color: #fff; border-radius: 12px; padding: 16px 22px 26px; box-shadow: 0 24px 60px rgba(20, 10, 18, 0.45); pointer-events: auto; cursor: pointer; }
+  #dzStory.talking .dz-box { display: grid; }
+  #dzStory .dz-box.pop { animation: dzpop 0.22s ease; }
+  @keyframes dzpop { from { transform: translateX(-50%) translateY(8px); opacity: 0.4; } to { transform: translateX(-50%); opacity: 1; } }
+  #dzStory .dz-face { width: 116px; height: 116px; margin-top: -40px; box-shadow: 0 10px 24px rgba(20, 10, 18, 0.45); border-radius: 10px; display: grid; place-items: center; font: 700 34px 'Amatic SC', cursive; border: 3px solid rgba(255, 255, 255, 0.25); transform: rotate(-3deg); }
+  #dzStory .dz-name { font: 700 34px/1 'Amatic SC', cursive; color: var(--rose); letter-spacing: 1px; }
+  #dzStory .dz-name small { font: 600 12px 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.55); margin-left: 10px; letter-spacing: 0; }
+  #dzStory .dz-text { font: 600 18px/1.45 'Nunito', sans-serif; margin-top: 4px; min-height: 52px; }
+  #dzStory .dz-next { position: absolute; right: 18px; bottom: 6px; font: 700 18px 'Amatic SC', cursive; color: rgba(255, 255, 255, 0.5); }
+  #dzStory .dz-skip { position: absolute; right: 24px; top: 22px; display: none; pointer-events: auto; font: 700 28px 'Amatic SC', cursive; color: #fff; background: var(--plate); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 0 16px; cursor: pointer; }
+  #dzStory.talking .dz-skip { display: block; }
+  #dzStory .dz-banner { position: absolute; left: 50%; top: 92px; transform: translateX(-50%) rotate(-2deg); background: var(--plate); color: #fff; font: 700 38px 'Amatic SC', cursive; padding: 2px 26px; border-radius: 8px; opacity: 0; letter-spacing: 1px; }
+  #dzStory .dz-banner.hot { background: #b3132a; }
+  #dzStory .dz-banner.show { animation: dzban 3.2s ease forwards; }
+  @keyframes dzban { 0% { opacity: 0; } 8% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+  #dzStory .dz-panel { position: absolute; inset: 0; display: none; place-items: center; background: rgba(28, 16, 24, 0.35); backdrop-filter: blur(5px); pointer-events: auto; }
+  #dzStory .dz-panel.open { display: grid; }
+  #dzStory .dz-pbody { text-align: center; font: 600 16px/1.5 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.85); }
+  #dzStory .dz-pbody table { margin: 0 auto 8px; font: 700 26px 'Amatic SC', cursive; } #dzStory .dz-pbody td { padding: 0 10px; }
+  #dzStory .dz-pbody tr.me { color: var(--rose); }
+  #dzStory .qbtns { display: flex; justify-content: center; gap: 10px; margin-top: 18px; }
+  #dzStory .qbtns button.primary { background: var(--cream); color: #251821; border-color: var(--cream); }
+  #dzStory .qbtns button.primary::before { content: '◆ '; color: #ff4d5e; }
+  body.cutscene #speedo, body.cutscene #minimap, body.cutscene #raceHud, body.cutscene #countdown { display: none !important; }
+  .qtiles button.story { background: var(--cream) !important; color: #251821 !important; border-color: var(--cream) !important; }
+  .qtiles button.story b::before { content: '◆ '; color: #ff4d5e; }
+  /* keyboard focus in menus (arrow keys) */
+  #qr button.kfocus, .qcard button.kfocus, #menu .pnav button.kfocus, #settings button.kfocus, #settings input.kfocus, #dzStory .qbtns button.kfocus { outline: 3px solid var(--rose); outline-offset: 3px; }
+  #menu .pnav button.kfocus::after { content: '›'; color: var(--rose); }
+  button:focus:not(.kfocus) { outline: none; }
+  #settings .srow:has(.kfocus) { background: rgba(255, 135, 162, 0.12); border-radius: 8px; }
+  #settings .stabs button.kfocus { outline: 3px solid var(--rose); outline-offset: 2px; }
+  .skeyhint { font: 600 12px 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.55); margin-left: auto; padding-right: 8px; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="loading"><div><b>Dzair Underground</b><span>loading…</span></div></div>
+<div id="sb"></div>
+<div id="nosfx"></div>
+<div id="toast"></div>
+<div id="menu">
+  <div class="pcard">
+    <h2>Paused</h2>
+    <div class="pctx" id="pauseCtx"></div>
+    <nav class="pnav">
+      <button data-a="resume" class="primary">Resume</button>
+      <button data-a="restart" id="pRestart">Restart race</button>
+      <button data-a="reset">Reset car <kbd>R</kbd></button>
+      <button data-a="settings">Settings</button>
+      <button data-a="controls">Controls</button>
+      <button data-a="quickrace" class="quiet">Quit to main menu</button>
+    </nav>
+    <p class="phint">Esc to resume</p>
+  </div>
+</div>
+
+<div id="settings" class="ovl">
+  <div class="sbox">
+    <header><button class="sback" data-s="back">‹ Back</button><h2>Settings</h2><span class="ssaved" id="sSaved">saved</span><span class="skeyhint">↑↓ move · ←→ change · Enter select · Esc back</span></header>
+    <div class="sbody">
+      <nav class="stabs">
+        <button data-tab="audio"><b>Audio</b><small>volumes, music</small></button>
+        <button data-tab="display"><b>Display</b><small>time, weather, effects</small></button>
+        <button data-tab="gameplay"><b>Gameplay</b><small>gearbox, camera, lights</small></button>
+        <button data-tab="controls"><b>Controls</b><small>keyboard, gamepad</small></button>
+      </nav>
+      <section class="spane" data-pane="audio">
+        <h4>Volume</h4>
+        <div class="srow"><div><b>Master</b><small>Everything except the music</small></div><div class="sctl"><input type="range" min="0" max="1" step="0.05" data-set="master"><output></output></div></div>
+        <div class="srow"><div><b>Engine</b><small>Your car and the opponent's</small></div><div class="sctl"><input type="range" min="0" max="1.6" step="0.05" data-vol="engine"><output></output></div></div>
+        <div class="srow"><div><b>Tyres</b><small>Squeal, skids, gravel and splash</small></div><div class="sctl"><input type="range" min="0" max="1.6" step="0.05" data-vol="tyres"><output></output></div></div>
+        <div class="srow"><div><b>Music</b><small>Background playlist</small></div><div class="sctl"><input type="range" min="0" max="1" step="0.05" data-vol="music"><output></output></div></div>
+        <h4>Sound</h4>
+        <div class="srow"><div><b>Sound effects</b><small>Mute the car sounds <kbd>N</kbd></small></div><div class="sctl seg" data-set="sound"><button data-v="1">On</button><button data-v="0">Off</button></div></div>
+        <div class="srow"><div><b>Music</b><small id="sNow">-</small></div><div class="sctl seg" data-set="musicOn"><button data-v="1">On</button><button data-v="0">Off</button><button data-s="nextSong" class="solo">Next song</button></div></div>
+        <footer><button data-s="reset">Reset audio to defaults</button></footer>
+      </section>
+      <section class="spane" data-pane="display">
+        <h4>World</h4>
+        <div class="srow"><div><b>Time of day</b><small>Lights switch on by themselves at night <kbd>V</kbd> <kbd>Y</kbd></small></div><div class="sctl seg" data-set="time"><button data-v="day">Day</button><button data-v="dusk">Dusk</button><button data-v="night">Night</button><button data-v="dawn">Dawn</button></div></div>
+        <div class="srow"><div><b>Weather</b><small>Rain and snow make the valley look different, grip is unchanged <kbd>U</kbd></small></div><div class="sctl seg" data-set="weather"><button data-v="clear">Clear</button><button data-v="windy">Windy</button><button data-v="rain">Rain</button><button data-v="snow">Snow</button><button data-v="storm">Storm</button></div></div>
+        <h4>Effects</h4>
+        <div class="srow"><div><b>Depth of field</b><small>Soft blur at the top and bottom of the screen (miniature look)</small></div><div class="sctl seg" data-set="tiltShift"><button data-v="1">On</button><button data-v="0">Off</button></div></div>
+        <div class="srow"><div><b>Speed effects</b><small>Motion blur and speed lines above 120 km/h and on nitrous</small></div><div class="sctl seg" data-set="speedFx"><button data-v="1">On</button><button data-v="0">Off</button></div></div>
+        <div class="srow"><div><b>HUD</b><small>Speedometer and mini-map while driving <kbd>H</kbd></small></div><div class="sctl seg" data-set="hud"><button data-v="1">Show</button><button data-v="0">Hide</button></div></div>
+        <footer><button data-s="reset">Reset display to defaults</button></footer>
+      </section>
+      <section class="spane" data-pane="gameplay">
+        <h4>Driving</h4>
+        <div class="srow"><div><b>Gearbox</b><small>Manual: shift with <kbd>E</kbd> / <kbd>Q</kbd> <kbd>M</kbd></small></div><div class="sctl seg" data-set="manual"><button data-v="0">Automatic</button><button data-v="1">Manual</button></div></div>
+        <div class="srow"><div><b>Car lights</b><small>Auto turns the headlights on at dusk and night <kbd>F</kbd></small></div><div class="sctl seg" data-set="lightMode"><button data-v="0">Auto</button><button data-v="1">On</button><button data-v="2">Off</button></div></div>
+        <h4>Camera</h4>
+        <div class="srow"><div><b>Starting camera</b><small>Change it any time while driving <kbd>C</kbd></small></div><div class="sctl seg wrap" data-set="cam"><button data-v="0">Far chase</button><button data-v="1">Near chase</button><button data-v="2">Hood</button><button data-v="3">Bumper</button><button data-v="4">Diorama</button><button data-v="5">Overhead</button></div></div>
+        <p class="snote">Car, handling (slidey / stock MW), opponent and laps are chosen in Quick Race before each race.</p>
+        <footer><button data-s="reset">Reset gameplay to defaults</button></footer>
+      </section>
+      <section class="spane" data-pane="controls">
+        <h4>Driving</h4>
+        <div class="keys2">
+          <span><kbd>W</kbd><kbd>↑</kbd></span><span>Accelerate</span>
+          <span><kbd>S</kbd><kbd>↓</kbd></span><span>Brake / reverse</span>
+          <span><kbd>A</kbd><kbd>D</kbd><kbd>←</kbd><kbd>→</kbd></span><span>Steer</span>
+          <span><kbd>Space</kbd></span><span>Handbrake</span>
+          <span><kbd>X</kbd></span><span>Nitrous (hold)</span>
+          <span><kbd>Shift</kbd><kbd>B</kbd></span><span>Speedbreaker (toggle)</span>
+          <span><kbd>E</kbd><kbd>Q</kbd></span><span>Shift up / down (manual gearbox)</span>
+          <span><kbd>R</kbd></span><span>Back on the road</span>
+        </div>
+        <h4>Car</h4>
+        <div class="keys2">
+          <span><kbd>F</kbd></span><span>Lights: Auto / On / Off</span>
+          <span><kbd>,</kbd><kbd>.</kbd></span><span>Turn signal left / right</span>
+          <span><kbd>G</kbd></span><span>Hazard lights</span>
+          <span><kbd>M</kbd></span><span>Automatic / manual gearbox</span>
+        </div>
+        <h4>Camera &amp; game</h4>
+        <div class="keys2">
+          <span><kbd>C</kbd></span><span>Change camera</span>
+          <span><kbd>L</kbd></span><span>Look back (hold)</span>
+          <span><kbd>V</kbd> <kbd>Y</kbd> <kbd>U</kbd></span><span>Day / night · time of day · weather</span>
+          <span><kbd>K</kbd> <kbd>J</kbd> <kbd>N</kbd></span><span>Next song · music on/off · sound on/off</span>
+          <span><kbd>H</kbd></span><span>Hide / show HUD</span>
+          <span><kbd>Esc</kbd><kbd>P</kbd></span><span>Pause</span>
+        </div>
+        <h4>Gamepad</h4>
+        <div class="keys2">
+          <span><kbd>Stick</kbd></span><span>Steer</span>
+          <span><kbd>RT</kbd> <kbd>LT</kbd></span><span>Gas · brake</span>
+          <span><kbd>A</kbd> <kbd>B</kbd> <kbd>X</kbd></span><span>Handbrake · nitrous · speedbreaker</span>
+          <span><kbd>Y</kbd> <kbd>R3</kbd></span><span>Camera · look back</span>
+          <span><kbd>LB</kbd> <kbd>RB</kbd></span><span>Shift down / up</span>
+          <span><kbd>Start</kbd></span><span>Pause</span>
+        </div>
+        <p class="snote">Remapping keys will come in a later update. Developer tuning panels: <kbd>T</kbd></p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div id="lap" class="panel"><div><span>LAP </span><b id="lapCur">0:00.000</b></div><div><span>LAST </span><b id="lapLast">–</b></div><div><span>BEST </span><b id="lapBest">–</b></div></div>
+
+<div id="tele" class="panel">
+  <h3>Telemetry</h3>
+  <div class="kv">
+    <span>Car data</span><span id="tCar"></span>
+    <span>Slip angle (body)</span><span id="tSlip"></span>
+    <span>Yaw rate</span><span id="tYaw"></span>
+    <span>Lateral / long G</span><span id="tG"></span>
+    <span>Steer angle / max</span><span id="tSteer"></span>
+    <span>Clutch · boost</span><span id="tClutch"></span>
+    <span>Peak power · Vmax</span><span id="tPow"></span>
+  </div>
+  <div class="tires">
+    <div class="tire" id="w0"></div><div class="tire" id="w1"></div>
+    <div class="tire" id="w2"></div><div class="tire" id="w3"></div>
+  </div>
+  <div id="drift">DRIFT: OUT</div>
+</div>
+
+<div id="help" class="panel">
+  <kbd>X</kbd> nitrous &nbsp; <kbd>Shift</kbd> speedbreaker &nbsp; <kbd>L</kbd> look back<br>
+  <kbd>C</kbd> camera &nbsp; <kbd>R</kbd> reset &nbsp; <kbd>Esc</kbd> pause / all controls</div>
+
+<div id="raceHud" class="hidden">
+  <div class="plate"><b>Lap</b><span id="rhLap">1/3</span></div>
+  <div class="plate"><b>Time</b><span id="rhTime">0:00.000</span></div>
+  <div class="plate" id="rhPosBox"><b>Pos</b><span id="rhPos">1/2</span></div>
+  <div class="plate"><b>Best</b><span id="rhBest">-</span></div>
+</div>
+<div id="countdown"></div>
+<div id="results" class="overlay"><div class="qcard"><h1 id="resTitle">Finished</h1><div id="resBody"></div>
+  <div class="qbtns"><button id="resRestart">Restart</button><button id="resMenu">Menu</button></div></div></div>
+<div id="qr" class="overlay">
+<div class="qr-title">Dzair Underground</div>
+<div class="qr-view"><button data-view="car">Car</button><button data-view="map">Map</button><button id="qrSettings">Settings</button><span class="qr-drag">drag to rotate · scroll to zoom</span></div>
+<div id="qrInfo" class="qr-info"></div>
+<div class="qcard">
+  <div class="qcrumbs" id="qrCrumbs"></div>
+  <section data-step="mode"><h1>Choose a mode</h1>
+    <div class="qtiles" id="storyTiles"></div>
+    <div class="qtiles" data-group="mode" style="margin-top:10px">
+      <button data-v="tt"><b>Time trial</b><small>Just you against the clock. Beat your record lap.</small></button>
+      <button data-v="ai"><b>VS AI</b><small>Race one rival. Three levels of opponent.</small></button>
+      <button data-v="free"><b>Free drive</b><small>No timer, no rules. Explore the map.</small></button>
+    </div></section>
+  <section data-step="level"><h1>Pick your opponent</h1>
+    <div class="qtiles" data-group="level">
+      <button data-v="1"><b>1 · Rookie</b><small>Brakes early, never pushes. Lap ~1:22.</small></button>
+      <button data-v="2"><b>2 · Racer</b><small>Solid and quick, uses nitrous. Lap ~1:06.</small></button>
+      <button data-v="3"><b>3 · Legend</b><small>Right on the limit. Lap ~0:58.</small></button>
+    </div></section>
+  <section data-step="car"><h1>Choose your car</h1>
+    <div class="qcarousel"><button class="arrow" id="carPrev">‹</button><div class="qcname"><b id="qcName"></b><small id="qcIdx"></small></div><button class="arrow" id="carNext">›</button></div>
+    <div class="qrow"><span class="ql">Colour</span><div class="qswatch" id="qrPaint"></div></div>
+    <div class="qrow"><span class="ql">Version</span><div class="qopts" data-group="up"><button data-v="1">Upgraded</button><button data-v="0">Stock</button></div></div>
+    <div class="qrow"><span class="ql">Handling</span><div class="qopts" data-group="handling"><button data-v="slidey">Slidey</button><button data-v="stock">Stock MW</button></div></div>
+    <select id="qrCar" hidden></select>
+  </section>
+  <section data-step="map"><h1>Choose a map</h1>
+    <div class="qcarousel"><button class="arrow" id="mapPrev">‹</button><div class="qcname"><b id="qmName"></b><small id="qmSub"></small></div><button class="arrow" id="mapNext">›</button></div>
+    <div class="qrow" id="qrLapsRow"><span class="ql">Laps</span><div class="qopts" data-group="laps"><button data-v="1">1</button><button data-v="3">3</button><button data-v="5">5</button></div></div>
+  </section>
+  <div class="qnav"><button id="qrBack">‹ Back</button><button id="qrNext" class="big">Next</button></div>
+  <p class="qhint">Esc: settings &amp; controls · drag the 3D view to look around</p>
+</div></div>
+<canvas id="minimap" width="380" height="380"></canvas>
+<div id="speedo" class="panel">
+  <div class="sp">
+    <div class="sp-main"><span id="spd">0</span><span id="spdUnit">km/h</span></div>
+    <div class="diamond"><span id="gear">1</span></div>
+  </div>
+  <div class="sp-rpm" id="rpmSeg"></div>
+  <div class="gauges"><div class="g nos" title="Nitrous"><i id="nosG"></i></div><div class="g sbm" title="Speedbreaker"><i id="sbG"></i></div></div>
+  <div class="bar" id="rpmBar"><b id="rpmRed"></b><i></i></div>
+  <div id="rpmTxt"><span id="rpmVal">0 rpm</span><span id="gbx">AUTO</span></div>
+  <div class="inputs">
+    <span>Steer</span><div class="bar" id="steerBar"><i></i></div>
+    <span>Throttle</span><div class="bar" id="thrBar"><i></i></div>
+    <span>Brake</span><div class="bar" id="brkBar"><i></i></div>
+    <span>E-brake</span><div class="bar" id="ebBar"><i></i></div>
+  </div>
+</div>
+
+<script type="module" src="./game.js"></script>
+</body>
+</html>

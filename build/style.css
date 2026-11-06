@@ -25,6 +25,8 @@
     border-radius:999px; padding:5px 12px; background:var(--card); }
   .icons a:hover { border-color:var(--link); color:var(--link); text-decoration:none; }
   .icons svg { width:15px; height:15px; }
+  .icons a.play { background:#1b1f24; color:#fff; border-color:#1b1f24; }
+  .icons a.play:hover { background:var(--link); border-color:var(--link); color:#fff; }
 
   /* section titles */
   h2 { font-size:22px; font-weight:600; margin:38px 0 18px; }
