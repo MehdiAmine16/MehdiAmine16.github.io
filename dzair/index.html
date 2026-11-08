@@ -3,7 +3,10 @@
 <head>
 <meta name="robots" content="noindex, nofollow">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Dzair Underground">
+<link rel="apple-touch-icon" href="./icon.png">
 <title>Dzair Underground</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
@@ -24,6 +27,24 @@
   canvas { display: block; }
   .panel { position: absolute; background: var(--panel); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--panel-border); border-radius: 14px; box-shadow: 0 8px 30px rgba(30, 80, 130, 0.12); }
   #speedo { right: 18px; bottom: 18px; width: 290px; padding: 14px 18px 16px; }
+  /* FPS counter: always visible (menu, race, even with the HUD hidden) */
+  /* map card (no 3D preview): screenshot + 2D circuit + description; the Car / Map 3D toggles are gone */
+  .qr-view button[data-view] { display: none; }
+  #qrInfo .mapshot { display: block; width: 100%; border-radius: 10px; margin: -4px 0 10px; aspect-ratio: 16 / 9; object-fit: cover; }
+  #qrInfo .mapline { display: block; width: 100%; max-width: 300px; margin: 8px auto 4px; }
+  #qrInfo.mapcard { width: 340px; }
+  /* main menu (NFS MW style): big stacked entries */
+  #qr .qmain { display: flex; flex-direction: column; gap: 10px; }
+  #qr .qmain button { text-align: left; padding: 14px 18px; border-radius: 14px; border: 2px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #fff; cursor: pointer; transition: transform 0.12s, background 0.12s; }
+  #qr .qmain button b { display: block; font: 700 38px/1 'Amatic SC', cursive; letter-spacing: 1px; }
+  #qr .qmain button small { opacity: 0.75; font-size: 13px; }
+  #qr .qmain button:hover:not(:disabled), #qr .qmain button:focus-visible { background: var(--rose); color: #251821; transform: translateX(6px); }
+  #qr .qmain button.soon { opacity: 0.45; cursor: default; }
+  #qr .qtiles3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  #fps { position: fixed; top: 8px; right: 10px; z-index: 9999; pointer-events: none; font: 600 12px/1.2 ui-monospace, Menlo, monospace;
+    color: #fff; background: rgba(20, 14, 24, 0.55); padding: 3px 8px; border-radius: 8px; letter-spacing: 0.02em; }
+  #fps b { font-size: 14px; } #fps span { opacity: 0.75; margin-left: 4px; }
+  #fps.warn b { color: #ffcf4a; } #fps.bad b { color: #ff5a6a; }
   #speedo .row { display: flex; align-items: flex-end; justify-content: space-between; }
   #spd { font-size: 64px; font-weight: 800; line-height: 0.9; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
   #spdUnit { font-size: 13px; color: var(--muted); font-weight: 600; margin-left: 4px; }
@@ -170,8 +191,24 @@
 
   /* ---------- quick race front end: menu left, live 3D showroom / map flyover right ---------- */
   #loading { background: #251821 !important; color: #fff !important; }
-  #loading b { display: block; font: 700 96px/1 'Amatic SC', cursive; letter-spacing: 3px; text-align: center; }
-  #loading span { display: block; font: 700 30px 'Amatic SC', cursive; color: var(--rose); text-align: center; margin-top: 6px; }
+  /* startup screen: placeholder picture (assets/ui/splash.jpg, replace with a better one later) + progress bar */
+  #loading { background: #120c14 url('./assets/ui/splash.jpg') center / cover no-repeat !important; display: block !important; transition: opacity 0.6s; }
+  #loading.done { opacity: 0; pointer-events: none; }
+  /* drifting tyre smoke over the picture (CSS only) */
+  #loading .ld-smoke { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  #loading .ld-smoke i { position: absolute; bottom: -18%; width: 70vw; height: 60vh; border-radius: 50%; filter: blur(40px);
+    background: radial-gradient(closest-side, rgba(235, 228, 240, 0.55), rgba(235, 228, 240, 0)); animation: ldSmoke 14s linear infinite; }
+  #loading .ld-smoke i:nth-child(1) { left: -30vw; animation-duration: 16s; }
+  #loading .ld-smoke i:nth-child(2) { left: 10vw; bottom: -10%; animation-duration: 12s; animation-delay: -5s; opacity: 0.8; }
+  #loading .ld-smoke i:nth-child(3) { left: 45vw; bottom: -24%; animation-duration: 18s; animation-delay: -9s; }
+  #loading .ld-smoke i:nth-child(4) { left: -10vw; bottom: 0; animation-duration: 20s; animation-delay: -13s; opacity: 0.6; }
+  @keyframes ldSmoke { 0% { transform: translateX(0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateX(45vw) translateY(-12vh) scale(1.4); opacity: 0; } }
+  #loading .ld-bottom { position: absolute; left: 0; right: 0; bottom: 0; padding: 120px 6vw 44px; background: linear-gradient(transparent, rgba(12, 6, 14, 0.92) 55%); }
+  #loading b { display: block; font: 700 clamp(48px, 8vw, 104px)/1 'Amatic SC', cursive; letter-spacing: 3px; color: #fff; text-shadow: 0 4px 24px #000; }
+  #loading .ld-bar { height: 10px; margin-top: 18px; background: rgba(255, 255, 255, 0.15); border-radius: 6px; overflow: hidden; }
+  #loading .ld-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ff5a6a, #ff87a2); transition: width 0.25s; }
+  #loading .ld-row { display: flex; justify-content: space-between; margin-top: 10px; font: 700 26px 'Amatic SC', cursive; color: #fff; }
+  #loading .ld-row span:first-child { color: var(--rose); }
   #qr.overlay { background: linear-gradient(90deg, rgba(28, 16, 24, 0.78) 0%, rgba(28, 16, 24, 0.45) 38%, rgba(28, 16, 24, 0) 62%); backdrop-filter: none; place-items: center start; pointer-events: none; padding: 0 0 0 4vw; }
   #qr .qcard { pointer-events: auto; width: min(560px, 92vw); margin-top: 90px; }
   #qr .qcard h1 { font-size: 52px; }
@@ -218,6 +255,7 @@
   .qnav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
   .qnav .big { margin: 0 !important; }
   #qrBack.hide { visibility: hidden; }
+  #qrNext.hide { display: none; }
   #qrNext:disabled { opacity: 0.4; }
 
   .qcname.swap b, .qcname.swap small { animation: qswap 0.55s ease; }
@@ -328,7 +366,13 @@
 </script>
 </head>
 <body>
-<div id="loading"><div><b>Dzair Underground</b><span>loading…</span></div></div>
+<div id="loading"><div class="ld-smoke"><i></i><i></i><i></i><i></i></div><div class="ld-bottom"><b>Dzair Underground</b>
+  <div class="ld-bar"><i id="ldFill"></i></div><div class="ld-row"><span id="ldLabel">Starting…</span><span id="ldPct">0%</span></div></div></div>
+<script>
+  // startup loading screen (NFS MW style): picture + progress bar. main.js calls window.__loadStep(fraction, label).
+  window.__loadStep = (f, label) => { const fill = document.getElementById('ldFill'); if (!fill) return;
+    fill.style.width = Math.round(f * 100) + '%'; document.getElementById('ldPct').textContent = Math.round(f * 100) + '%'; if (label) document.getElementById('ldLabel').textContent = label; };
+</script>
 <div id="sb"></div>
 <div id="nosfx"></div>
 <div id="toast"></div>
@@ -470,19 +514,24 @@
 <div id="qrInfo" class="qr-info"></div>
 <div class="qcard">
   <div class="qcrumbs" id="qrCrumbs"></div>
-  <section data-step="mode"><h1>Choose a mode</h1>
-    <div class="qtiles" id="storyTiles"></div>
-    <div class="qtiles" data-group="mode" style="margin-top:10px">
-      <button data-v="tt"><b>Time trial</b><small>Just you against the clock. Beat your record lap.</small></button>
-      <button data-v="ai"><b>VS AI</b><small>Race one rival. Three levels of opponent.</small></button>
-      <button data-v="free"><b>Free drive</b><small>No timer, no rules. Explore the map.</small></button>
+  <section data-step="home"><h1>Main menu</h1>
+    <div class="qmain" id="mainMenu">
+      <button data-go="career"><b>Career</b><small>The streets of Algeria. Earn respect, beat the bosses, win their cars.</small></button>
+      <button data-go="quick"><b>Quick race</b><small>Pick a car, a map and a difficulty. Race now.</small></button>
+      <button data-go="online" class="soon" disabled><b>Online</b><small>Race your friends. Coming soon.</small></button>
+      <button data-go="settings"><b>Settings</b><small>Sound, display, controls.</small></button>
     </div></section>
-  <section data-step="level"><h1>Pick your opponent</h1>
-    <div class="qtiles" data-group="level">
-      <button data-v="1"><b>1 · Rookie</b><small>Brakes early, never pushes. Lap ~1:22.</small></button>
-      <button data-v="2"><b>2 · Racer</b><small>Solid and quick, uses nitrous. Lap ~1:06.</small></button>
-      <button data-v="3"><b>3 · Legend</b><small>Right on the limit. Lap ~0:58.</small></button>
-    </div></section>
+  <section data-step="career"><h1>Career</h1>
+    <div class="qtiles" id="storyTiles"></div></section>
+  <section data-step="race"><h1>Race settings</h1>
+    <div class="qtiles qtiles3" data-group="mode">
+      <button data-v="ai"><b>VS AI</b><small>Race a rival.</small></button>
+      <button data-v="tt"><b>Time trial</b><small>You against the clock.</small></button>
+      <button data-v="free"><b>Free drive</b><small>No timer, no rules.</small></button>
+    </div>
+    <div class="qrow" id="qrLevelRow"><span class="ql">Difficulty</span><div class="qopts" data-group="level"><button data-v="1">Rookie</button><button data-v="2">Racer</button><button data-v="3">Legend</button></div></div>
+    <div class="qrow" id="qrLapsRow"><span class="ql">Laps</span><div class="qopts" data-group="laps"><button data-v="1">1</button><button data-v="3">3</button><button data-v="5">5</button></div></div>
+  </section>
   <section data-step="car"><h1>Choose your car</h1>
     <div class="qcarousel"><button class="arrow" id="carPrev">‹</button><div class="qcname"><b id="qcName"></b><small id="qcIdx"></small></div><button class="arrow" id="carNext">›</button></div>
     <div class="qrow"><span class="ql">Colour</span><div class="qswatch" id="qrPaint"></div></div>
@@ -492,11 +541,11 @@
   </section>
   <section data-step="map"><h1>Choose a map</h1>
     <div class="qcarousel"><button class="arrow" id="mapPrev">‹</button><div class="qcname"><b id="qmName"></b><small id="qmSub"></small></div><button class="arrow" id="mapNext">›</button></div>
-    <div class="qrow" id="qrLapsRow"><span class="ql">Laps</span><div class="qopts" data-group="laps"><button data-v="1">1</button><button data-v="3">3</button><button data-v="5">5</button></div></div>
   </section>
   <div class="qnav"><button id="qrBack">‹ Back</button><button id="qrNext" class="big">Next</button></div>
   <p class="qhint">Esc: settings &amp; controls · drag the 3D view to look around</p>
 </div></div>
+<div id="fps" title="frames per second · average frame time · worst frame in the last half second"><b id="fpsN">--</b> FPS <span id="fpsMs"></span></div>
 <canvas id="minimap" width="380" height="380"></canvas>
 <div id="speedo" class="panel">
   <div class="sp">
