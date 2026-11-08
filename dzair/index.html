@@ -357,6 +357,8 @@
   #settings .srow:has(.kfocus) { background: rgba(255, 135, 162, 0.12); border-radius: 8px; }
   #settings .stabs button.kfocus { outline: 3px solid var(--rose); outline-offset: 2px; }
   .skeyhint { font: 600 12px 'Nunito', sans-serif; color: rgba(255, 255, 255, 0.55); margin-left: auto; padding-right: 8px; }
+  body.rot { position: fixed !important; top: 0; left: 0; transform-origin: top left; transform: rotate(90deg) translateY(-100%); overflow: hidden; }
+  html.phone, html.phone body { background: #120c14; }
 </style>
 <script type="importmap">
 { "imports": {
@@ -366,6 +368,10 @@
 </script>
 </head>
 <body>
+<script>/* phone mode chosen earlier in this session (a race start reloads the page): turn the page at once, before anything
+   shows, so the loading screen is already landscape. phone.js takes over when it loads. */
+try { if (sessionStorage.getItem('dzPhone') === '1') { document.documentElement.classList.add('phone'); var b = document.body, w = innerWidth, h = innerHeight;
+  if (h > w) { b.classList.add('rot'); b.style.width = h + 'px'; b.style.height = w + 'px'; } } } catch (e) {}</script>
 <div id="loading"><div class="ld-smoke"><i></i><i></i><i></i><i></i></div><div class="ld-bottom"><b>Dzair Underground</b>
   <div class="ld-bar"><i id="ldFill"></i></div><div class="ld-row"><span id="ldLabel">Starting…</span><span id="ldPct">0%</span></div></div></div>
 <script>
